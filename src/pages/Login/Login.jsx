@@ -1,5 +1,3 @@
-import axios from 'axios';
-import React from 'react';
 import {login} from '../api/login/loginService';
 import {boardList} from '../api/게시판테스트/boardService';
 import './Login.css';
@@ -29,7 +27,7 @@ const Login = () => {
           alert("아이디와 패스워드를 확인해주세요");
           return;
         }
-        console.log('토큰 발급 확인 : ' + restoken);
+        console.log('토큰 발급 : ' + restoken);
         document.cookie = "token=" + restoken + "; path=/; max-age=86400";
         document.cookie = "userId=" + id.value + "; path=/; max-age=86400";
       })
