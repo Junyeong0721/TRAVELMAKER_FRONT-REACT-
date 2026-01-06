@@ -24,7 +24,7 @@ const Login = () => {
         const restoken = res.data.data;
 
         if (restoken === null){
-          alert("아이디와 패스워드를 확인해주세요");
+          alert("아이디와 패스워드를 확인해주세요!");
           return;
         }
         console.log('토큰 발급 : ' + restoken);
