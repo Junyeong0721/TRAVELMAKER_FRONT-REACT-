@@ -13,6 +13,9 @@ api.interceptors.request.use(config => {
     if (config.url.includes('/auth/login')) {
         return config;
     }
+    if (config.url.includes('/auth/register')) {
+        return config;
+    }
 
     const token = (document.cookie.split('; ').find(row => row.startsWith('token=')) || '').split('=')[1];
 
