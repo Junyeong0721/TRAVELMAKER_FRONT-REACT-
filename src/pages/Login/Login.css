@@ -9,6 +9,7 @@
 .login-page {
   width: 100vw;
   height: 100vh;
+  background-color: #ffd54f;
   background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop');
   background-size: cover;
   background-position: center;

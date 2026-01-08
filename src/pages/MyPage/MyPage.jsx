@@ -61,10 +61,10 @@ const MyPage = () => {
 
             <nav className="sidebar-menu">
               <div className="menu-item active">👤 내 정보 관리</div>
+              <div className="menu-item">👥 친구 목록</div>
               <div className="menu-item">⚙️ AI 맞춤 설정</div>
               <div className="menu-item">🧠 MBTI 분석</div>
               <div className="menu-item">🔖 저장된 여행지</div>
-              <div className="menu-item">🔒 보안 설정</div>
               <div className="menu-item logout">📤 로그아웃</div>
             </nav>
           </aside>
