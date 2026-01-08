@@ -2,7 +2,7 @@ import React from 'react';
 import { register } from '../api/회원가입/registerService';
 import './SignUp.css';
 
-const Signup = () => {
+const Signup = () => {//회원가입로직
 
   function 회원가입유효성검사(id, email, pw) {
 
