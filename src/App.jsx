@@ -5,6 +5,7 @@ import Main from './pages/Main/Main';
 import SignUp from './pages/signUp/SignUp';
 import MyPage from './pages/MyPage/MyPage';
 import AiPage from './pages/AI/AiPage';
+import FriendPage from './pages/Friend/FriendPage';
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/Sign" element ={<SignUp />} />
           <Route path="/MyPage" element ={<MyPage />} />
           <Route path="/AiPage" element ={<AiPage />} />
+          <Route path="/FriendPage" element ={<FriendPage />} />
         </Routes>
       </div>
     </Router>
