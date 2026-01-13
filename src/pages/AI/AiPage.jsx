@@ -9,14 +9,11 @@ const AIPage = () => {
   const [mySchedule, setMySchedule] = useState([]);
 
   const locationData = {
-    "충청남도": ["예산군", "천안시", "아산시", "청양군", "홍성군"],
-    "서울특별시": ["강남구", "종로구", "마포구", "송파구"],
-    "제주특별자치도": ["제주시", "서귀포시"],
-    "강원도": ["강릉시", "속초시", "춘천시"]
+    "강원도": ["강릉시"]
   };
 
-  const [selectedCity, setSelectedCity] = useState("충청남도");
-  const [selectedDistrict, setSelectedDistrict] = useState("예산군");
+  const [selectedCity, setSelectedCity] = useState("강원도");
+  const [selectedDistrict, setSelectedDistrict] = useState("강릉시");
 
   const previewDestinations = [
     { id: 1, title: '제주도 애월 해안산책로', match: 98, tags: ['#오션뷰', '#자연'], img: 'jeju.jpg' },
