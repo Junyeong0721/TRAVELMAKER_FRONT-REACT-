@@ -6,6 +6,7 @@ import SignUp from './pages/signUp/SignUp';
 import MyPage from './pages/MyPage/MyPage';
 import AiPage from './pages/AI/AiPage';
 import FriendPage from './pages/Friend/FriendPage';
+import CommunityPage from './pages/Community/CommunityPage';
 import './App.css';
 
 function App() {
@@ -19,10 +20,12 @@ function App() {
           <Route path="/MyPage" element ={<MyPage />} />
           <Route path="/AiPage" element ={<AiPage />} />
           <Route path="/FriendPage" element ={<FriendPage />} />
+          <Route path="/CommunityPage" element ={<CommunityPage />} />
+          
         </Routes>
       </div>
     </Router>
   );
 }
-
+  
 export default App;
