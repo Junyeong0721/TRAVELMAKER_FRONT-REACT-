@@ -1,8 +1,10 @@
 import {login} from '../api/login/loginService';
 import {boardList} from '../api/게시판테스트/boardService';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 const Login = () => { 
+  const navigate = useNavigate();
 
   function 로그인() {
     const id = document.getElementById("id");
@@ -109,15 +111,9 @@ const Login = () => {
             <label>비밀번호</label>
             <div className="password-wrapper">
               <input type="password" placeholder="••••••••" id = "pw"/>
-              <span className="eye-icon">👁</span>
+              <br/>
+              <br/>
             </div>
-          </div>
-
-          <div className="form-options">
-            <label className="checkbox-label">
-              <input type="checkbox" /> 로그인 유지
-            </label>
-            <a href="#find" className="find-link">비밀번호 찾기</a>
           </div>
 
           <button className="login-submit-btn" onClick={로그인}>로그인</button>
@@ -126,9 +122,9 @@ const Login = () => {
           {/* 이 부분이 박스 내부 최하단에 고정됩니다 */}
           <div className="signup-prompt">
             <span>계정이 없으신가요?</span>
-            <a href="#signup" className="signup-link">회원가입</a>
+            <span className="signup-link" onClick={() => navigate('/Sign')}>회원가입</span>
           </div>
-          
+
           <div className="corner-tag"></div>
         </div>
       </div>

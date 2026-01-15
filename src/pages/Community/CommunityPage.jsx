@@ -92,13 +92,13 @@ const Community = () => {
               <span className="search-icon">🔍</span>
               <input type="text" placeholder="여행지, 키워드, MBTI로 검색해보세요" />
             </div>
+            <button className="write-post-btn">검색</button>
             <button className="write-post-btn">➕ 글쓰기</button>
           </div>
 
           <div className="content-header">
             <h2>전체 글</h2>
             <p>실시간으로 올라오는 다양한 여행 이야기들을 만나보세요.</p>
-            <button className="filter-sort-btn">≡</button>
           </div>
 
           {/* 포스트 그리드 */}
