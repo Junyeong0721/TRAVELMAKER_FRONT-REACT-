@@ -16,7 +16,6 @@ const MyPage = () => {
             <span>도움말</span>
           </nav>
           <div className="header-right">
-            <span className="dark-mode-icon">🌙</span>
             <div className="user-profile-circle"></div>
             <span className="user-name">김여행</span>
           </div>
