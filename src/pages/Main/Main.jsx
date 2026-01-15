@@ -1,7 +1,10 @@
 import React from 'react';
 import './Main.css';
 
+
+
 const Main = () => {
+
   return (
     <div className="main-container">
       {/* Navbar */}
@@ -16,7 +19,7 @@ const Main = () => {
         </nav>
         <div className="nav-actions">
           {/* KR 제거됨 */}
-          <button className="login-btn">로그인</button>
+          <button className="login-btn" >로그인</button>
         </div>
       </header>
 
