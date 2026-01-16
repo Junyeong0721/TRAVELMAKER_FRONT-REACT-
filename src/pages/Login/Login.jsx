@@ -3,6 +3,8 @@ import {boardList} from '../api/게시판테스트/boardService';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
+import { getCookie } from '../../js/getToken.js';
+
 const Login = () => { 
   const navigate = useNavigate();
 
@@ -18,30 +20,50 @@ const Login = () => {
       .then(res => {
         console.log(res);
 
+        //네트워크 or 서버 에러
         if (res.status !== 200) {
-
           console.log('error');
           return;
         }
-        const restoken = res.data.data;
 
-        if (restoken === null){
+        const data = res.data.data;
+
+        //로그인 유효성 검사
+        if (data === null){
           alert("아이디와 패스워드를 확인해주세요!");
           return;
         }
-        console.log('토큰 발급 : ' + restoken);
-        document.cookie = "token=" + restoken + "; path=/; max-age=86400";
-        document.cookie = "userId=" + id.value + "; path=/; max-age=86400";
-      })
+
+        setTokernCookie(data);
+        console.log('token 확인');
+        console.log(getCookie('userMbti'));
+
+        navigate('/');//메인페이지로 이동
+
+        // document.cookie = "token=" + restoken + "; path=/; max-age=86400";
+        // document.cookie = "userId=" + data.ninkname + "; path=/; max-age=86400";
+        // document.cookie = "userId=" + data.ninkname + "; path=/; max-age=86400";
+        // document.cookie = "userId=" + data.ninkname + "; path=/; max-age=86400";
+      });
   }
-  function getCookie(name) {//테스트용
-    const value = document.cookie
-      .split('; ')
-      .find(row => row.startsWith(name + '='));
-    return value ? value.split('=')[1] : null;
+
+  function setTokernCookie(data) {
+    console.log(data);
+    const restoken = data.accesstoken;
+    document.cookie = "token=" + restoken + "; path=/; max-age=86400";        // 토큰 담기
+    document.cookie = "userNickName=" + data.nickname + "; path=/; max-age=86400";
+    document.cookie = "userMbti=" + data.mbti + "; path=/; max-age=86400";
+    document.cookie = "userTitle=" + data.title + "; path=/; max-age=86400";
+
+  }
+  // function getCookie(name) {//테스트용
+  //   const value = document.cookie
+  //     .split('; ')
+  //     .find(row => row.startsWith(name + '='));
+  //   return value ? value.split('=')[1] : null;
+  // }
 
 
-  }
   function 쿠키확인() {//테스트용
     const token = getCookie('token');
     console.log('토큰확인 : ' + token);

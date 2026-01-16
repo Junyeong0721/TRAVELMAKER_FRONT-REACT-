@@ -1,12 +1,13 @@
 import React from 'react';
 import './CommunityPage.css';
+import { useNavigate } from 'react-router-dom';
 
 const Community = () => {
+  const navigate = useNavigate();
   // 샘플 게시글 데이터
   const posts = [
     {
       id: 1,
-      tag: '#발리 #한달살기',
       title: '푸른 바다와 함께한 발리에서의 2주, 완벽한 휴식',
       author: '이하늘',
       mbti: 'ENFP',
@@ -16,7 +17,6 @@ const Community = () => {
     },
     {
       id: 2,
-      tag: '#교토 #혼자여행',
       title: 'INFJ가 추천하는 조용한 교토 산책로 Top 5',
       author: '박지민',
       mbti: 'INFJ',
@@ -26,7 +26,6 @@ const Community = () => {
     },
     {
       id: 3,
-      tag: '#파리 #미식여행',
       title: '파리의 아침, 바게트 냄새를 따라 걷는 여행',
       author: '최정호',
       mbti: 'ENTJ',
@@ -36,12 +35,12 @@ const Community = () => {
     },
     {
       id: 4,
-      tag: '#아이슬란드 #오로라',
       title: '살면서 꼭 한 번은 가봐야 할 아이슬란드 링로드',
       author: '김소연',
       mbti: 'INTJ',
       likes: '3.1k',
       views: '9.8k',
+      comment: '342',
       img: 'https://images.unsplash.com/photo-1476610182048-b716b8518aae?auto=format&fit=crop&w=500&q=80'
     }
   ];
@@ -93,7 +92,7 @@ const Community = () => {
               <input type="text" placeholder="여행지, 키워드, MBTI로 검색해보세요" />
             </div>
             <button className="write-post-btn">검색</button>
-            <button className="write-post-btn">➕ 글쓰기</button>
+            <button className="write-post-btn" onClick={e=> navigate('/WritePage')}>➕ 글쓰기</button>
           </div>
 
           <div className="content-header">
@@ -107,7 +106,6 @@ const Community = () => {
               <article key={post.id} className="post-card">
                 <div className="post-img-box">
                   <img src={post.img} alt={post.title} />
-                  <span className="post-tag-badge">{post.tag}</span>
                   <button className="bookmark-btn">🔖</button>
                 </div>
                 <div className="post-info">
@@ -122,6 +120,7 @@ const Community = () => {
                     </div>
                     <div className="post-stats">
                       <span>❤️ {post.likes}</span>
+                      <span>💬 {post.comment}</span>
                       <span>👁️ {post.views}</span>
                     </div>
                   </div>
