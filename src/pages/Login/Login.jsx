@@ -3,6 +3,8 @@ import {boardList} from '../api/게시판테스트/boardService';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
+import { getCookie } from '../../js/getToken.js';
+
 const Login = () => { 
   const navigate = useNavigate();
 
@@ -33,6 +35,10 @@ const Login = () => {
         }
 
         setTokernCookie(data);
+        console.log('token 확인');
+        console.log(getCookie('userMbti'));
+
+        navigate('/');//메인페이지로 이동
 
         // document.cookie = "token=" + restoken + "; path=/; max-age=86400";
         // document.cookie = "userId=" + data.ninkname + "; path=/; max-age=86400";
@@ -50,14 +56,14 @@ const Login = () => {
     document.cookie = "userTitle=" + data.title + "; path=/; max-age=86400";
 
   }
-  function getCookie(name) {//테스트용
-    const value = document.cookie
-      .split('; ')
-      .find(row => row.startsWith(name + '='));
-    return value ? value.split('=')[1] : null;
+  // function getCookie(name) {//테스트용
+  //   const value = document.cookie
+  //     .split('; ')
+  //     .find(row => row.startsWith(name + '='));
+  //   return value ? value.split('=')[1] : null;
+  // }
 
 
-  }
   function 쿠키확인() {//테스트용
     const token = getCookie('token');
     console.log('토큰확인 : ' + token);
