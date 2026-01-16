@@ -43,12 +43,14 @@ const Signup = () => {//회원가입로직
   const pw = document.getElementById("pw");
   const email = document.getElementById("email");
   const nickname = document.getElementById("nickname");
+  const mbti = document.getElementById("mbti");
 
   const obj = {
     userId: id.value,
     userPw: pw.value,
     userEmail: email.value,
-    userNickname: nickname.value
+    userNickname: nickname.value,
+    mbti: mbti.value
   };
 
   // 1. 유효성 검사 함수 호출
@@ -132,6 +134,11 @@ const Signup = () => {//회원가입로직
           <div className="input-group">
             <label>비밀번호</label>
             <input type="password" placeholder="8자리 이상 입력하세요" id="pw"/>
+          </div>
+
+          <div className="input-group">
+            <label>MBTI</label>
+            <input type="text" placeholder="당신의 MBTI를 입력하세요" id="mbti"/>
           </div>
 
           <button className="signup-submit-btn" onClick={회원가입}>가입하기</button>

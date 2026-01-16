@@ -18,21 +18,37 @@ const Login = () => {
       .then(res => {
         console.log(res);
 
+        //네트워크 or 서버 에러
         if (res.status !== 200) {
-
           console.log('error');
           return;
         }
-        const restoken = res.data.data;
 
-        if (restoken === null){
+        const data = res.data.data;
+
+        //로그인 유효성 검사
+        if (data === null){
           alert("아이디와 패스워드를 확인해주세요!");
           return;
         }
-        console.log('토큰 발급 : ' + restoken);
-        document.cookie = "token=" + restoken + "; path=/; max-age=86400";
-        document.cookie = "userId=" + id.value + "; path=/; max-age=86400";
-      })
+
+        setTokernCookie(data);
+
+        // document.cookie = "token=" + restoken + "; path=/; max-age=86400";
+        // document.cookie = "userId=" + data.ninkname + "; path=/; max-age=86400";
+        // document.cookie = "userId=" + data.ninkname + "; path=/; max-age=86400";
+        // document.cookie = "userId=" + data.ninkname + "; path=/; max-age=86400";
+      });
+  }
+
+  function setTokernCookie(data) {
+    console.log(data);
+    const restoken = data.accesstoken;
+    document.cookie = "token=" + restoken + "; path=/; max-age=86400";        // 토큰 담기
+    document.cookie = "userNickName=" + data.nickname + "; path=/; max-age=86400";
+    document.cookie = "userMbti=" + data.mbti + "; path=/; max-age=86400";
+    document.cookie = "userTitle=" + data.title + "; path=/; max-age=86400";
+
   }
   function getCookie(name) {//테스트용
     const value = document.cookie
