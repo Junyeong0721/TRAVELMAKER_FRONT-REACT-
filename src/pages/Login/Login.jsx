@@ -5,7 +5,7 @@ import './Login.css';
 
 import { getCookie } from '../../js/getToken.js';
 
-const Login = () => { 
+const Login = () => { //git연동 테스트
   const navigate = useNavigate();
 
   function 로그인() {
