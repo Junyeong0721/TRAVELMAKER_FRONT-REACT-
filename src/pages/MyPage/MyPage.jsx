@@ -4,24 +4,7 @@ import './MyPage.css';
 const MyPage = () => {
   return (
     <div className="mypage-wrapper">
-      {/* 상단 헤더 */}
-      <header className="header">
-        <div className="header-inner">
-          <h1 className="logo">TripMate <span>Travel Companion</span></h1>
-          <nav className="header-nav">
-            <span>홈</span>
-            <span>기능</span>
-            <span>여행지</span>
-            <span>커뮤니티</span>
-            <span>도움말</span>
-          </nav>
-          <div className="header-right">
-            <div className="user-profile-circle"></div>
-            <span className="user-name">김여행</span>
-          </div>
-        </div>
-      </header>
-
+      
       {/* 메인 컨텐츠 영역 */}
       <main className="mypage-container">
         {/* 페이지 타이틀 */}

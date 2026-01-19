@@ -109,7 +109,7 @@ const Main = () => {
           <h2>지금 바로 여행 계획을 시작하세요</h2>
           <p>TripMate와 함께라면 완벽한 여행이 당신을 기다립니다</p>
           <div className="cta-btns">
-            <button className="btn-primary-blue">무료로 시작하기</button>
+            <button className="btn-primary-blue"onClick={e=>{navigate('/Login')}}>무료로 시작하기</button>
             <button className="btn-outline">데모 보기</button>
           </div>
         </div>
