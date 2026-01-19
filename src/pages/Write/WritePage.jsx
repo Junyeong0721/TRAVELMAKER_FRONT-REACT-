@@ -3,6 +3,9 @@ import './WritePage.css';
 import { Editor } from '@tinymce/tinymce-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
+import { getCookie } from '../../js/getToken';
+import { write } from '../api/게시판테스트/writeService';
+
 
 const PostWrite = () => {
   const navigate = useNavigate();
@@ -10,22 +13,38 @@ const PostWrite = () => {
   const [title, setTitle] = useState(''); // 제목 상태 관리
 
   // 게시하기 버튼 클릭 시 실행
-  const handlePublish = async () => {
-    if (editorRef.current) {
-      const content = editorRef.current.getContent(); // 에디터의 HTML 내용 추출
-      
-      const postData = {
-        title: title,
-        content: content, // 여기에 HTML 태그와 Base64 이미지가 포함됨
-        userIdx: 1, // 테스트용 (조준영님 IDX)
-        status: 'PUBLISHED'
-      };
+ const 글쓰기 = () => {
+    if (!editorRef.current) return;
+    const title = document.getElementById("title");
+    const content = editorRef.current.getContent(); 
+    const token = getCookie('token'); 
 
-      console.log("서버로 전송할 데이터:", postData);
-      
-      // 여기서 axios.post('/api/board/write', postData) 호출하시면 됩니다.
-      alert("글이 성공적으로 저장되었습니다!");
-    }
+    // 서버로 보낼 데이터 객체 구성
+    const obj = {
+      title: title.value,      // 제목 상태값
+      content: content,  // 에디터 HTML 내용
+      planidx: 1, 
+      token: token
+    };
+
+    console.log("서버로 전송할 데이터:", obj);
+
+    // 실제 서버 전송 API 호출
+    write(obj)
+      .then(res => {
+        console.log("서버 응답:", res);
+
+        if (res.status === 200) {
+          alert("글이 성공적으로 저장되었습니다!");
+          navigate('/CommunityPage'); // 성공 시 커뮤니티 페이지로 이동
+        } else {
+          alert("서버 오류가 발생했습니다.");
+        }
+      })
+      .catch(err => {
+        console.error("통신 에러:", err);
+        alert("네트워크 연결을 확인해주세요.");
+      });
   };
 
 
@@ -39,8 +58,7 @@ const PostWrite = () => {
           <div className="header-flex">
             <h2 className="main-title">여행 이야기 공유하기</h2>
             <div className="action-btns">
-              <button className="btn-draft">임시 저장</button>
-              <button className="btn-publish">게시하기</button>
+              <button className="btn-publish" onClick={글쓰기}>게시하기</button>
             </div>
           </div>
         </header>
@@ -50,7 +68,7 @@ const PostWrite = () => {
           <section className="editor-section">
             <div className="input-card">
               <label className="input-label">🖋️ 제목</label>
-              <input type="text" className="title-input" placeholder="당신의 여행에 멋진 제목을 붙여주세요" />
+              <input type="text" className="title-input" placeholder="당신의 여행에 멋진 제목을 붙여주세요" id="title"/>
             </div>
 
             <div className="input-card">
@@ -61,7 +79,7 @@ const PostWrite = () => {
                   onInit={(evt, editor) => editorRef.current = editor}
                   initialValue="<p>어떤 여행이었나요? 이곳에 자세한 이야기를 들려주세요...</p>"
                   init={{
-                    height: 500,
+                    height: 800,
                     menubar: false,
                     statusbar: false,
                     language: 'ko_KR', 
