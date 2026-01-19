@@ -1,7 +1,35 @@
 import React from 'react';
 import './WritePage.css';
+import { Editor } from '@tinymce/tinymce-react';
+import { useNavigate } from 'react-router-dom';
+import { useState, useRef } from 'react';
 
 const PostWrite = () => {
+  const navigate = useNavigate();
+  const editorRef = useRef(null); // 에디터 내용을 가져오기 위한 ref
+  const [title, setTitle] = useState(''); // 제목 상태 관리
+
+  // 게시하기 버튼 클릭 시 실행
+  const handlePublish = async () => {
+    if (editorRef.current) {
+      const content = editorRef.current.getContent(); // 에디터의 HTML 내용 추출
+      
+      const postData = {
+        title: title,
+        content: content, // 여기에 HTML 태그와 Base64 이미지가 포함됨
+        userIdx: 1, // 테스트용 (조준영님 IDX)
+        status: 'PUBLISHED'
+      };
+
+      console.log("서버로 전송할 데이터:", postData);
+      
+      // 여기서 axios.post('/api/board/write', postData) 호출하시면 됩니다.
+      alert("글이 성공적으로 저장되었습니다!");
+    }
+  };
+
+
+
   return (
     <div className="post-write-wrapper">
       <main className="write-container">
@@ -28,15 +56,32 @@ const PostWrite = () => {
             <div className="input-card">
               <label className="input-label">📝 내용</label>
               <div className="editor-container">
-                <div className="toolbar">
-                  <button>B</button>
-                  <button>I</button>
-                  <button>☰</button>
-                  <button>🔗</button>
-                  <div className="v-line"></div>
-                  <button>📍</button>
-                </div>
-                <textarea className="content-textarea" placeholder="어떤 여행이었나요? 이곳에 자세한 이야기를 들려주세요..."></textarea>
+                <Editor
+                  apiKey = 'd1y2skf5ovre6zinkxg4evgq170a6emydjbkkeyejxffoxuj'
+                  onInit={(evt, editor) => editorRef.current = editor}
+                  initialValue="<p>어떤 여행이었나요? 이곳에 자세한 이야기를 들려주세요...</p>"
+                  init={{
+                    height: 500,
+                    menubar: false,
+                    statusbar: false,
+                    language: 'ko_KR', 
+                    language_url: 'https://cdn.tiny.cloud/1/no-api-key/tinymce/7/langs/ko_KR.js',
+                    plugins: [
+                      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                      'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                    ],
+                    toolbar: 'undo redo | blocks | ' +
+                      'bold italic forecolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent | ' +
+                      'image | removeformat | help',
+                    // 이미지 업로드 관련 설정 (Base64 저장을 위해 필요)
+                    image_title: true,
+                    automatic_uploads: true,
+                    file_picker_types: 'image',
+                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                  }}
+                />
               </div>
             </div>
           </section>

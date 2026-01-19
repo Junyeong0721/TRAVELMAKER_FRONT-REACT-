@@ -139,8 +139,6 @@ const Login = () => { //git연동 테스트
           </div>
 
           <button className="login-submit-btn" onClick={로그인}>로그인</button>
-          <button className="testbutton" onClick={쿠키확인}>쿠키확인</button>
-          <button className="apitestbutton" onClick={api호출}>API호출</button>
           {/* 이 부분이 박스 내부 최하단에 고정됩니다 */}
           <div className="signup-prompt">
             <span>계정이 없으신가요?</span>
