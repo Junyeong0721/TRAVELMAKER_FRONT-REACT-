@@ -1,22 +1,50 @@
 import React from 'react';
 import './Main.css';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { getCookie } from '../../js/getToken.js';
+
 
 const Main = () => {
+  const navigate = useNavigate();
+  
+  // 3. 로그인 상태와 유저 정보를 담을 state 추가
+  const [nickname, setNickname] = useState(null);
+
+  // 4. 페이지 로드 시 쿠키 확인
+  useEffect(() => {
+    const userNick = getCookie('userNickName');
+    if (userNick) {
+      setNickname(userNick);
+    }
+  }, []);
+
+  // 5. 로그아웃 함수 (쿠키 삭제)
+  const handleLogout = () => {
+    document.cookie = "token=; path=/; max-age=0";
+    document.cookie = "userMbti=; path=/; max-age=0";
+    document.cookie = "userNickName=; path=/; max-age=0";
+    document.cookie = "userTitle=; path=/; max-age=0";
+    setNickname(null); // 상태 초기화
+    alert("로그아웃 되었습니다.");
+  };
+
   return (
     <div className="main-container">
       {/* Navbar */}
       <header className="navbar">
         <div className="logo">✈️ TripMate <span className="logo-sub">Travel Companion</span></div>
-        <nav className="nav-links">
-          <a href="#home">홈</a>
-          <a href="#features">기능</a>
-          <a href="#destinations">여행지</a>
-          <a href="#about">소개</a>
-          <a href="#help">도움말</a>
-        </nav>
+  
         <div className="nav-actions">
-          {/* KR 제거됨 */}
-          <button className="login-btn">로그인</button>
+          {/* 6. 조건부 렌더링 적용 */}
+          {nickname ? (
+            <div className="login-user-info">
+              <span className="user-nickname"><strong>{nickname}</strong>님</span>
+              <button className="logout-btn" onClick={handleLogout} style={{marginLeft: '10px'}}>로그아웃</button>
+            </div>
+          ) : (
+            <button className="login-btn" onClick={() => navigate('/login')}>로그인</button>
+          )}
         </div>
       </header>
 
@@ -35,7 +63,7 @@ const Main = () => {
           <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Hero" />
           <div className="card-overlay">
             <p>'꿈을 현실로'</p>
-            <button className="card-start-btn">시작하기</button>
+            <button className="card-start-btn" onClick={e=>{navigate('/Aipage')}}>시작하기</button>
           </div>
         </div>
       </section>
@@ -56,7 +84,7 @@ const Main = () => {
           <h3>일정 계획</h3>
           <h2>여행 일정을 쉽고 빠르게 계획하세요</h2>
           <p>AI 기반 추천으로 맞춤형 여행 일정을 자동으로 생성합니다.</p>
-          <button className="more-btn">더 알아보기</button>
+          <button className="more-btn" onClick={e=>{navigate('/Aipage')}}>더 알아보기</button>
           <div className="card-shapes">
             <div className="shape"></div>
             <div className="shape"></div>
@@ -67,7 +95,7 @@ const Main = () => {
           <h3>커뮤니티</h3>
           <h2>여행 친구와 요즘 가장 핫한 여행지를 공유하세요</h2>
           <p>실시간 정보와 여행 팁을 공유하고 소통할 수 있습니다.</p>
-          <button className="more-btn">더 알아보기</button>
+          <button className="more-btn" onClick={e=>{navigate('/CommunityPage')}}>더 알아보기</button>
           <div className="card-shapes">
             <div className="shape"></div>
             <div className="shape"></div>

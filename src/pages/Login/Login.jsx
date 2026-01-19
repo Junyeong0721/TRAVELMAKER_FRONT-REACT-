@@ -1,8 +1,12 @@
 import {login} from '../api/login/loginService';
 import {boardList} from '../api/게시판테스트/boardService';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
-const Login = () => { 
+import { getCookie } from '../../js/getToken.js';
+
+const Login = () => { //git연동 테스트
+  const navigate = useNavigate();
 
   function 로그인() {
     const id = document.getElementById("id");
@@ -16,30 +20,50 @@ const Login = () => {
       .then(res => {
         console.log(res);
 
+        //네트워크 or 서버 에러
         if (res.status !== 200) {
-
           console.log('error');
           return;
         }
-        const restoken = res.data.data;
 
-        if (restoken === null){
+        const data = res.data.data;
+
+        //로그인 유효성 검사
+        if (data === null){
           alert("아이디와 패스워드를 확인해주세요!");
           return;
         }
-        console.log('토큰 발급 : ' + restoken);
-        document.cookie = "token=" + restoken + "; path=/; max-age=86400";
-        document.cookie = "userId=" + id.value + "; path=/; max-age=86400";
-      })
+
+        setTokernCookie(data);
+        console.log('token 확인');
+        console.log(getCookie('userMbti'));
+
+        navigate('/');//메인페이지로 이동
+
+        // document.cookie = "token=" + restoken + "; path=/; max-age=86400";
+        // document.cookie = "userId=" + data.ninkname + "; path=/; max-age=86400";
+        // document.cookie = "userId=" + data.ninkname + "; path=/; max-age=86400";
+        // document.cookie = "userId=" + data.ninkname + "; path=/; max-age=86400";
+      });
   }
-  function getCookie(name) {//테스트용
-    const value = document.cookie
-      .split('; ')
-      .find(row => row.startsWith(name + '='));
-    return value ? value.split('=')[1] : null;
+
+  function setTokernCookie(data) {
+    console.log(data);
+    const restoken = data.accesstoken;
+    document.cookie = "token=" + restoken + "; path=/; max-age=86400";        // 토큰 담기
+    document.cookie = "userNickName=" + data.nickname + "; path=/; max-age=86400";
+    document.cookie = "userMbti=" + data.mbti + "; path=/; max-age=86400";
+    document.cookie = "userTitle=" + data.title + "; path=/; max-age=86400";
+
+  }
+  // function getCookie(name) {//테스트용
+  //   const value = document.cookie
+  //     .split('; ')
+  //     .find(row => row.startsWith(name + '='));
+  //   return value ? value.split('=')[1] : null;
+  // }
 
 
-  }
   function 쿠키확인() {//테스트용
     const token = getCookie('token');
     console.log('토큰확인 : ' + token);
@@ -109,26 +133,18 @@ const Login = () => {
             <label>비밀번호</label>
             <div className="password-wrapper">
               <input type="password" placeholder="••••••••" id = "pw"/>
-              <span className="eye-icon">👁</span>
+              <br/>
+              <br/>
             </div>
           </div>
 
-          <div className="form-options">
-            <label className="checkbox-label">
-              <input type="checkbox" /> 로그인 유지
-            </label>
-            <a href="#find" className="find-link">비밀번호 찾기</a>
-          </div>
-
           <button className="login-submit-btn" onClick={로그인}>로그인</button>
-          <button className="testbutton" onClick={쿠키확인}>쿠키확인</button>
-          <button className="apitestbutton" onClick={api호출}>API호출</button>
           {/* 이 부분이 박스 내부 최하단에 고정됩니다 */}
           <div className="signup-prompt">
             <span>계정이 없으신가요?</span>
-            <a href="#signup" className="signup-link">회원가입</a>
+            <span className="signup-link" onClick={() => navigate('/Sign')}>회원가입</span>
           </div>
-          
+
           <div className="corner-tag"></div>
         </div>
       </div>
