@@ -3,33 +3,43 @@ import './CommunityPage.css';
 import { useNavigate } from 'react-router-dom';
 import { boardList } from '../api/게시판테스트/boardService';
 import { useState, useEffect } from 'react';
+import { boardCount } from '../api/게시판테스트/boardCount';
+
 
 const Community = () => {
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
 
-const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
 
+  const [totalPosts, setTotalPosts] = useState(0);
+
+  const limit = 4;
+  const totalPages = Math.ceil(totalPosts / limit) || 1;
+
+  useEffect(() => {
+  // 전체 개수를 가져오는 API 호출 (예: boardCount())
+  boardCount().then(res => {
+    setTotalPosts(res.data);
+  });
+  
+  ViewList(1); // 첫 페이지 목록 불러오기
+  }, []);
   // 3. 데이터를 불러오는 함수
   const ViewList = (pagenum) => {
-    boardList(pagenum)
-      .then(res => {
-        console.log("서버 응답:", res);
+    const offset = (pagenum - 1) * 4; 
 
-        if (res.status !== 200) {
-          console.log('error');
-          return;
-        }
+// 페이지 번호에 따른 오프셋 계산
 
-        // 서버 컨트롤러에서 ResponseEntity.ok(boardlist)로 보냈으므로 res.data가 리스트입니다.
-        const data = res.data;
-        console.log("받은 데이터:", data);
-        
-        setPosts(data); // 4. 가져온 데이터를 상태에 저장 (화면 갱신)
-      })
-      .catch(err => {
-        console.error("데이터 로딩 실패:", err);
-      });
-  };
+    boardList(offset)
+          .then(res => {
+            if (res.status === 200) {
+              setPosts(res.data);
+              setCurrentPage(pagenum); // UI 상태는 사용자가 누른 번호로 저장
+            }
+          })
+          .catch(err => console.error(err));
+    };
 
   // 5. 페이지가 마운트(로드)될 때 실행되는 useEffect
   useEffect(() => {
@@ -93,9 +103,9 @@ const [posts, setPosts] = useState([]);
           </div>
 
           {/* 포스트 그리드 */}
-          <div className="post-grid">
+          <div className="post-grid" key={posts.length}>
             {posts.map(post => (
-              <article key={post.id} className="post-card">
+              <article key={post.idx} className="post-card">
                 <div className="post-img-box">
                   <img src='https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=500&q=80' alt={post.title} />
                 </div>
@@ -121,14 +131,31 @@ const [posts, setPosts] = useState([]);
           </div>
 
           {/* 페이지네이션 */}
-          <div className="pagination">
-            <button className="page-arrow">‹</button>
-            <button className="page-num active">1</button>
-            <button className="page-num">2</button>
-            <button className="page-num">3</button>
-            <span className="page-dots">...</span>
-            <button className="page-num">10</button>
-            <button className="page-arrow">›</button>
+            <div className="pagination">
+            {/* 이전 버튼 */}
+            <button 
+              className="page-arrow" 
+              onClick={() => ViewList(currentPage - 1)}
+              disabled={currentPage === 1}
+            > &lt; </button>
+
+            {/* totalPages 수만큼 버튼 생성 */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+              <button
+                key={num}
+                className={`page-num ${num === currentPage ? 'active' : ''}`}
+                onClick={() => ViewList(num)}
+              >
+                {num}
+              </button>
+            ))}
+
+            {/* 다음 버튼 */}
+            <button 
+              className="page-arrow" 
+              onClick={() => ViewList(currentPage + 1)}
+              disabled={currentPage === totalPages || totalPages === 0}
+            > &gt; </button>
           </div>
         </main>
       </div>
