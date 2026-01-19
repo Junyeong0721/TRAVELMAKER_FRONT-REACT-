@@ -1,9 +1,33 @@
 import React from 'react';
 import './Main.css';
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { getCookie } from '../../js/getToken.js';
+
 
 const Main = () => {
   const navigate = useNavigate();
+  
+  // 3. 로그인 상태와 유저 정보를 담을 state 추가
+  const [nickname, setNickname] = useState(null);
+
+  // 4. 페이지 로드 시 쿠키 확인
+  useEffect(() => {
+    const userNick = getCookie('userNickName');
+    if (userNick) {
+      setNickname(userNick);
+    }
+  }, []);
+
+  // 5. 로그아웃 함수 (쿠키 삭제)
+  const handleLogout = () => {
+    document.cookie = "token=; path=/; max-age=0";
+    document.cookie = "userMbti=; path=/; max-age=0";
+    document.cookie = "userNickName=; path=/; max-age=0";
+    document.cookie = "userTitle=; path=/; max-age=0";
+    setNickname(null); // 상태 초기화
+    alert("로그아웃 되었습니다.");
+  };
 
   return (
     <div className="main-container">
@@ -12,8 +36,15 @@ const Main = () => {
         <div className="logo">✈️ TripMate <span className="logo-sub">Travel Companion</span></div>
   
         <div className="nav-actions">
-          {/* KR 제거됨 */}
-          <button className="login-btn" onClick={() => navigate('/login')} >로그인</button>
+          {/* 6. 조건부 렌더링 적용 */}
+          {nickname ? (
+            <div className="login-user-info">
+              <span className="user-nickname"><strong>{nickname}</strong>님</span>
+              <button className="logout-btn" onClick={handleLogout} style={{marginLeft: '10px'}}>로그아웃</button>
+            </div>
+          ) : (
+            <button className="login-btn" onClick={() => navigate('/login')}>로그인</button>
+          )}
         </div>
       </header>
 

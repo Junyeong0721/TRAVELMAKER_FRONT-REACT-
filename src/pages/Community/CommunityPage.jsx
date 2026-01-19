@@ -1,49 +1,41 @@
 import React from 'react';
 import './CommunityPage.css';
 import { useNavigate } from 'react-router-dom';
+import { boardList } from '../api/게시판테스트/boardService';
+import { useState, useEffect } from 'react';
 
 const Community = () => {
   const navigate = useNavigate();
-  // 샘플 게시글 데이터
-  const posts = [
-    {
-      id: 1,
-      title: '푸른 바다와 함께한 발리에서의 2주, 완벽한 휴식',
-      author: '이하늘',
-      mbti: 'ENFP',
-      likes: '1.2k',
-      views: '4.5k',
-      img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=500&q=80'
-    },
-    {
-      id: 2,
-      title: 'INFJ가 추천하는 조용한 교토 산책로 Top 5',
-      author: '박지민',
-      mbti: 'INFJ',
-      likes: '856',
-      views: '3.1k',
-      img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=500&q=80'
-    },
-    {
-      id: 3,
-      title: '파리의 아침, 바게트 냄새를 따라 걷는 여행',
-      author: '최정호',
-      mbti: 'ENTJ',
-      likes: '2.4k',
-      views: '7.2k',
-      img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=500&q=80'
-    },
-    {
-      id: 4,
-      title: '살면서 꼭 한 번은 가봐야 할 아이슬란드 링로드',
-      author: '김소연',
-      mbti: 'INTJ',
-      likes: '3.1k',
-      views: '9.8k',
-      comment: '342',
-      img: 'https://images.unsplash.com/photo-1476610182048-b716b8518aae?auto=format&fit=crop&w=500&q=80'
-    }
-  ];
+
+const [posts, setPosts] = useState([]);
+
+  // 3. 데이터를 불러오는 함수
+  const ViewList = (pagenum) => {
+    boardList(pagenum)
+      .then(res => {
+        console.log("서버 응답:", res);
+
+        if (res.status !== 200) {
+          console.log('error');
+          return;
+        }
+
+        // 서버 컨트롤러에서 ResponseEntity.ok(boardlist)로 보냈으므로 res.data가 리스트입니다.
+        const data = res.data;
+        console.log("받은 데이터:", data);
+        
+        setPosts(data); // 4. 가져온 데이터를 상태에 저장 (화면 갱신)
+      })
+      .catch(err => {
+        console.error("데이터 로딩 실패:", err);
+      });
+  };
+
+  // 5. 페이지가 마운트(로드)될 때 실행되는 useEffect
+  useEffect(() => {
+    ViewList(1); // 첫 페이지 로드
+  }, []);
+
 
   return (
     <div className="community-wrapper">
@@ -91,7 +83,7 @@ const Community = () => {
               <span className="search-icon">🔍</span>
               <input type="text" placeholder="여행지, 키워드, MBTI로 검색해보세요" />
             </div>
-            <button className="write-post-btn">검색</button>
+            <button className="write-post-btn" onClick={e => ViewList(1)}>검색</button>
             <button className="write-post-btn" onClick={e=> navigate('/WritePage')}>➕ 글쓰기</button>
           </div>
 
@@ -105,8 +97,7 @@ const Community = () => {
             {posts.map(post => (
               <article key={post.id} className="post-card">
                 <div className="post-img-box">
-                  <img src={post.img} alt={post.title} />
-                  <button className="bookmark-btn">🔖</button>
+                  <img src='https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=500&q=80' alt={post.title} />
                 </div>
                 <div className="post-info">
                   <h3 className="post-title">{post.title}</h3>
@@ -114,14 +105,14 @@ const Community = () => {
                     <div className="author-info">
                       <div className="author-avatar small"></div>
                       <div className="author-text">
-                        <span className="author-name">{post.author}</span>
+                        <span className="author-name">{post.nickname}</span>
                         <span className="author-mbti">{post.mbti}</span>
                       </div>
                     </div>
                     <div className="post-stats">
-                      <span>❤️ {post.likes}</span>
-                      <span>💬 {post.comment}</span>
-                      <span>👁️ {post.views}</span>
+                      <span>❤️ {post.likeCount}</span>
+                      <span>💬 {post.commentCount}</span>
+                      <span>👁️ {post.viewCount}</span>
                     </div>
                   </div>
                 </div>
