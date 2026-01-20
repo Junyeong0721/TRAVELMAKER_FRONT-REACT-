@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './AiPage.css';
 import api from '../api/axiosSetting'; // axios 설정 파일 경로 확인
+import { FaUtensils, FaCoffee, FaLandmark, FaMapMarkerAlt, FaCalendarAlt, FaPlus } from 'react-icons/fa';
 
 const AIPage = () => {
   const [isSettingsComplete, setIsSettingsComplete] = useState(false);
@@ -12,7 +13,9 @@ const AIPage = () => {
 
   // 지역 데이터
   const locationData = {
-    "강원도": ["강릉시"]
+    "강원도": ["강릉시", "속초시", "양양군"],
+    "제주도": ["제주시", "서귀포시"],
+    "부산광역시": ["해운대구", "광안리", "남포동"]
   };
 
   const [selectedCity, setSelectedCity] = useState("강원도");
@@ -26,15 +29,15 @@ const AIPage = () => {
 
   const [aiRecommendedSets, setAiRecommendedSets] = useState([]);
 
-  // Fallback 데이터
+  // Fallback 데이터 (API 실패 시 보여줄 예시 데이터)
   const fallbackSets = [
     {
       id: 'set1',
-      day: '1일차: 감성 카페 투어 (예시)',
+      day: '1일차',
       memos: [
         { 
           id: 'm1', time: '10:00 AM', category: 'CAFE',
-          title: '📍 안목해변 카페거리', 
+          title: '안목해변 카페거리', 
           desc: '바다 뷰 카페를 중심으로 가볍게 산책해요.',
           address: '강원 강릉시 창해로14번길 20-1',
           reason: 'ENFP의 감성을 자극하는 탁 트인 바다 뷰입니다.',
@@ -42,31 +45,90 @@ const AIPage = () => {
         },
         { 
           id: 'm2', time: '12:30 PM', category: 'RESTAURANT',
-          title: '🍴 강릉 중앙시장 먹거리', 
+          title: '강릉 중앙시장 먹거리', 
           desc: '시장 투어로 점심과 간식을 해결해요.',
           address: '강원 강릉시 금성로 21',
           reason: '활기찬 분위기에서 다양한 먹거리를 즐길 수 있어요.',
           tags: ['시장투어', '먹방', '활기찬']
         },
+        { 
+          id: 'm3', time: '14:00 PM', category: 'SIGHTSEEING',
+          title: '오죽헌', 
+          desc: '역사와 자연이 어우러진 고즈넉한 산책.',
+          address: '강원 강릉시 율곡로3139번길 24',
+          reason: '여유롭게 걸으며 생각을 정리하기 좋습니다.',
+          tags: ['역사', '산책', '포토존']
+        },
+        { 
+          id: 'm4', time: '16:00 PM', category: 'CAFE',
+          title: '툇마루 커피', 
+          desc: '흑임자 라떼가 유명한 웨이팅 맛집.',
+          address: '강원 강릉시 난설헌로 232',
+          reason: 'MZ세대에게 핫한 필수 코스입니다.',
+          tags: ['커피', '흑임자', '핫플']
+        },
+        { 
+          id: 'm5', time: '18:00 PM', category: 'RESTAURANT',
+          title: '엄지네 포장마차', 
+          desc: '꼬막 비빔밥으로 하루를 든든하게 마무리.',
+          address: '강원 강릉시 경강로2255번길 21',
+          reason: '현지인도 줄 서서 먹는 검증된 맛집.',
+          tags: ['꼬막', '저녁', '맛집']
+        },
       ]
     },
     {
       id: 'set2',
-      day: '2일차: 바다/산책 힐링 (예시)',
+      day: '2일차',
       memos: [
         { 
-          id: 'm3', time: '09:30 AM', category: 'SIGHTSEEING',
-          title: '🌊 경포호 산책', 
+          id: 'm6', time: '09:30 AM', category: 'SIGHTSEEING',
+          title: '경포호 산책', 
           desc: '호수 주변을 천천히 걸으며 힐링해요.',
           address: '강원 강릉시 경포로 365',
           reason: '복잡한 생각을 정리하기 좋은 평화로운 곳입니다.',
           tags: ['힐링', '자전거', '호수']
         },
+        { 
+          id: 'm7', time: '11:30 AM', category: 'RESTAURANT',
+          title: '초당 순두부 마을', 
+          desc: '고소하고 부드러운 순두부 정식.',
+          address: '강원 강릉시 초당순두부길 77',
+          reason: '강릉에 왔다면 꼭 먹어야 할 소울 푸드.',
+          tags: ['한식', '아침', '순두부']
+        },
+        { 
+          id: 'm8', time: '13:00 PM', category: 'CAFE',
+          title: '순두부 젤라또', 
+          desc: '식사 후 달콤하고 고소한 젤라또 디저트.',
+          address: '강원 강릉시 초당순두부길 95-5',
+          reason: '단짠단짠의 조화가 매력적입니다.',
+          tags: ['디저트', '아이스크림']
+        },
       ]
     }
   ];
 
-  // 카테고리 스타일 헬퍼
+  // --- 헬퍼 함수들 ---
+  const getCategoryIcon = (category) => {
+    switch (category) {
+      case 'RESTAURANT': return <FaUtensils />;
+      case 'CAFE': return <FaCoffee />;
+      case 'SIGHTSEEING': return <FaLandmark />;
+      default: return <FaMapMarkerAlt />;
+    }
+  };
+
+  const getCategoryColor = (category) => {
+    switch (category) {
+      case 'RESTAURANT': return '#ff7e67';
+      case 'CAFE': return '#b08d55';
+      case 'SIGHTSEEING': return '#6c5ce7';
+      default: return '#888';
+    }
+  };
+
+  // 오른쪽 리스트용 카테고리 정보
   const getCategoryInfo = (category) => {
     switch (category) {
       case 'RESTAURANT': return { label: '🍚 식당', color: '#ff7e67', bg: '#fff0ec' };
@@ -78,7 +140,6 @@ const AIPage = () => {
 
   // --- 핸들러 ---
   const handleImportItem = (item) => {
-    // 중복 체크
     if (!mySchedule.find(m => m.id === item.id)) {
       setMySchedule([...mySchedule, item]);
     }
@@ -101,11 +162,8 @@ const AIPage = () => {
     handleImportItem(itemData);
   };
 
-  // ---------------------------------------------------------
-  // [기능 1] AI 전체 일정 저장 (왼쪽 리스트 전체)
-  // ---------------------------------------------------------
+  // [기능 1] AI 전체 일정 저장
   const handleSaveAllAI = async () => {
-    // 사용할 데이터 결정 (API 결과가 없으면 Fallback 데이터 사용)
     const targetSets = aiRecommendedSets.length > 0 ? aiRecommendedSets : fallbackSets;
 
     if (!targetSets || targetSets.length === 0) {
@@ -115,24 +173,23 @@ const AIPage = () => {
 
     if (!window.confirm("AI가 추천한 모든 일정을 DB에 저장하시겠습니까?")) return;
 
-    // 데이터 가공 (Flatten)
     const details = [];
     targetSets.forEach((daySet, index) => {
-      const currentDay = index + 1; // 1일차, 2일차...
-      
+      const currentDay = index + 1;
       daySet.memos.forEach((memo) => {
         details.push({
           day: currentDay,
           time: memo.time,
-          title: memo.title,    // 장소명
-          address: memo.address || "주소 정보 없음", // 주소 null 방지
+          title: memo.title,
+          address: memo.address || "주소 정보 없음",
           category: memo.category || "ETC"
         });
       });
     });
 
+    // ★ 실제 로그인한 유저 ID로 변경 필요 (현재는 테스트용 1)
     const payload = {
-      userIdx: 1, // ★ 실제 로그인한 유저 ID로 변경 필요
+      userIdx: 1, 
       title: `${selectedCity} ${selectedDistrict} AI 풀코스 여행`,
       details: details
     };
@@ -148,9 +205,7 @@ const AIPage = () => {
     }
   };
 
-  // ---------------------------------------------------------
-  // [기능 2] 나만의 일정 저장 (오른쪽 리스트)
-  // ---------------------------------------------------------
+  // [기능 2] 나만의 일정 저장
   const handleSaveMyPlan = async () => {
     if (mySchedule.length === 0) {
       alert("저장할 일정이 없습니다. 일정을 오른쪽으로 옮겨주세요!");
@@ -159,11 +214,8 @@ const AIPage = () => {
 
     if (!window.confirm("내가 선택한 일정을 저장하시겠습니까?")) return;
 
-    // 오른쪽 리스트는 '몇 일차' 정보가 섞여있거나 없을 수 있음.
-    // 여기서는 단순히 순서대로 저장하거나, 원본 데이터의 날짜를 추정해야 함.
-    // 일단 모두 '1일차' 또는 '선택한 일정'으로 저장한다고 가정.
     const details = mySchedule.map((item) => ({
-      day: 1, // 사용자가 드래그한건 일단 1일차로 퉁치거나, 별도 날짜 선택 로직 필요
+      day: 1, // 내 일정은 일단 1일차로 저장 (추후 날짜 선택 기능 확장 가능)
       time: item.time,
       title: item.title,
       address: item.address || "주소 정보 없음",
@@ -171,7 +223,7 @@ const AIPage = () => {
     }));
 
     const payload = {
-      userIdx: 1, // ★ 실제 로그인한 유저 ID로 변경 필요
+      userIdx: 1, 
       title: "내가 직접 만든 강릉 여행",
       details: details
     };
@@ -187,9 +239,7 @@ const AIPage = () => {
     }
   };
 
-  // ---------------------------------------------------------
   // AI 추천 요청
-  // ---------------------------------------------------------
   const fetchAiPlan = async (extraMessage = "") => {
     setIsLoading(true);
 
@@ -225,7 +275,7 @@ const AIPage = () => {
       }
     } catch (err) {
       console.error("AI 추천 실패:", err);
-      // 실패 시 fallback 데이터 보여줌 (테스트용)
+      // 실패 시 fallback 데이터 보여줌
       setAiRecommendedSets(fallbackSets);
     } finally {
       setIsLoading(false);
@@ -259,6 +309,7 @@ const AIPage = () => {
         </div>
       )}
 
+      {/* 헤더 */}
       <header className="header">
         <div className="header-inner">
           <h1 className="logo">TripMate <small>AI Travel</small></h1>
@@ -299,7 +350,6 @@ const AIPage = () => {
                     <option value="ISTJ">ISTJ - 청렴결백한 논리주의자</option>
                     <option value="INFP">INFP - 열정적인 중재자</option>
                     <option value="ENTP">ENTP - 논쟁을 즐기는 변론가</option>
-                    {/* 필요 시 더 추가 */}
                   </select>
                 </div>
 
@@ -320,7 +370,10 @@ const AIPage = () => {
                   <label>📍 여행 위치</label>
                   <select value={selectedCity} onChange={(e) => {
                       setSelectedCity(e.target.value);
-                      setSelectedDistrict(locationData[e.target.value][0]);
+                      // 지역 바뀌면 첫 번째 구군으로 자동 선택
+                      if (locationData[e.target.value]) {
+                        setSelectedDistrict(locationData[e.target.value][0]);
+                      }
                     }}>
                     {Object.keys(locationData).map(city => (
                       <option key={city} value={city}>{city}</option>
@@ -331,7 +384,7 @@ const AIPage = () => {
                 <div className="setting-card">
                   <label>📍 상세 지역</label>
                   <select value={selectedDistrict} onChange={(e) => setSelectedDistrict(e.target.value)}>
-                    {locationData[selectedCity].map(dist => (
+                    {locationData[selectedCity] && locationData[selectedCity].map(dist => (
                       <option key={dist} value={dist}>{dist}</option>
                     ))}
                   </select>
@@ -376,148 +429,126 @@ const AIPage = () => {
             </section>
           </div>
         ) : (
-          // --- [채팅 및 결과 화면] ---
+          // --- [결과 화면] ---
           <div className="chat-phase fade-in">
             <div className="notepad-layout-expanded">
-              {/* 왼쪽: AI 추천 리스트 */}
+              
+              {/* ▼ 왼쪽: AI 추천 리스트 (세로 컬럼 & 내부 스크롤) ▼ */}
               <div className="recommendation-scroll-area">
-                {(aiRecommendedSets.length ? aiRecommendedSets : fallbackSets).map((set) => (
-                  <section key={set.id} className="ai-memo-area compact">
-                    <div className="notepad-header">
-                      <span className="ai-status">✨ {set.day}</span>
-                      <button className="import-all-btn" onClick={() => handleImportSet(set.memos)}>
-                        전체 가져오기
+                {(aiRecommendedSets.length ? aiRecommendedSets : fallbackSets).map((set, setIdx) => (
+                  <div key={set.id} className="day-column">
+                    <div className="day-column-header">
+                      <h4><FaCalendarAlt style={{color:'#5D5FEF'}}/> {setIdx + 1}일차</h4>
+                      <button className="import-all-btn-icon" onClick={() => handleImportSet(set.memos)}>
+                        + 전체 담기
                       </button>
                     </div>
 
-                    <div className="notepad-content">
-                      {set.memos.map(memo => {
-                        const catInfo = getCategoryInfo(memo.category);
+                    <div className="day-timeline">
+                      {set.memos.map((memo) => {
+                        const color = getCategoryColor(memo.category);
                         return (
                           <div
                             key={memo.id}
-                            className="memo-item draggable"
+                            className="timeline-item"
                             draggable
                             onDragStart={(e) => onDragStart(e, memo)}
                           >
-                            <div className="memo-pin">📌</div>
-                            <div className="memo-body">
-                              <div className="memo-meta-row">
-                                <span className="memo-time">{memo.time}</span>
-                                <span className="category-badge" style={{
-                                    backgroundColor: catInfo.bg,
-                                    color: catInfo.color,
-                                    padding: '2px 8px',
-                                    borderRadius: '12px',
-                                    fontSize: '0.75rem',
-                                    fontWeight: 'bold',
-                                    marginLeft: '8px',
-                                    border: `1px solid ${catInfo.color}40`
-                                }}>
-                                  {catInfo.label}
-                                </span>
-                              </div>
-                              
-                              <h4 className="memo-title">{memo.title}</h4>
-                              {memo.address && <p className="memo-address">📍 {memo.address}</p>}
-                              
-                              <p className="memo-desc">{memo.desc}</p>
-                              
-                              {memo.tags && memo.tags.length > 0 && (
-                                <div className="memo-tags">
-                                  {memo.tags.map((tag, i) => (
-                                    <span key={i} className="tag">#{tag}</span>
-                                  ))}
-                                </div>
-                              )}
+                            <div className="timeline-marker" style={{ backgroundColor: color, borderColor: color }}>
+                              <span className="category-icon" style={{ color: '#fff' }}>
+                                {getCategoryIcon(memo.category)}
+                              </span>
                             </div>
-                            <button className="memo-add-btn" onClick={() => handleImportItem(memo)}>
-                              가져오기
-                            </button>
+                            
+                            <div className="timeline-content">
+                              <div className="time-badge">{memo.time}</div>
+                              <h4 className="place-title">{memo.title}</h4>
+                              
+                              {/* ★ 주소 표시 (수정됨) ★ */}
+                              {memo.address && (
+                                <p className="place-address">
+                                  📍 {memo.address}
+                                </p>
+                              )}
+                              
+                              <p className="place-desc">{memo.desc}</p>
+                              
+                              {/* 개별 추가 버튼 */}
+                              <button 
+                                className="add-btn-mini" 
+                                title="내 계획에 추가"
+                                onClick={() => handleImportItem(memo)}
+                              >
+                                <FaPlus size={10} />
+                              </button>
+                            </div>
                           </div>
                         );
                       })}
                     </div>
-                  </section>
+                  </div>
                 ))}
               </div>
 
               {/* 오른쪽: 나의 여행 계획장 */}
               <aside className="my-planner-area" onDragOver={onDragOver} onDrop={onDrop}>
-                <div className="notepad-header planner-header">
-                  <h4>📝 나의 여행 계획장</h4>
-                  <button className="reset-btn" onClick={onEditSettings}>설정 수정</button>
-                </div>
-
-                <div className="notepad-content planner-drop-zone">
-                  {mySchedule.length === 0 ? (
-                    <div className="empty-planner-msg">
-                      <p>원하는 일정을 이쪽으로 가져와서<br />나만의 여행을 완성하세요.</p>
-                      <small>(드래그하거나 '가져오기' 버튼 클릭)</small>
-                    </div>
-                  ) : (
-                    mySchedule.map((item, idx) => {
-                       const catInfo = getCategoryInfo(item.category);
-                       return (
-                        <div key={`${item.id}-${idx}`} className="memo-item planner-item">
-                          <div className="memo-body">
-                            <div style={{display:'flex', alignItems:'center', gap:'6px', marginBottom:'4px'}}>
-                              <span className="memo-time">{item.time}</span>
-                               <span style={{ fontSize:'0.7rem', color: catInfo.color }}>
-                                 {catInfo.label}
-                               </span>
-                            </div>
-                            <h4 className="memo-title">{item.title}</h4>
-                            <p className="memo-desc" style={{fontSize:'0.8rem', color:'#888'}}>
-                              {item.desc ? item.desc.substring(0, 30) + '...' : ''}
-                            </p>
+                 <div className="notepad-header planner-header">
+                   <h4>📝 나의 여행 계획장</h4>
+                   <button className="reset-btn" onClick={onEditSettings}>다시 설정</button>
+                 </div>
+                 
+                 <div className="notepad-content planner-drop-zone">
+                    {mySchedule.length === 0 ? (
+                      <div className="empty-planner-msg">
+                        <p>원하는 일정을 이쪽으로 가져와서<br />나만의 여행을 완성하세요.</p>
+                        <small>(드래그하거나 '가져오기' 버튼 클릭)</small>
+                      </div>
+                    ) : (
+                      mySchedule.map((item, idx) => {
+                        const catInfo = getCategoryInfo(item.category);
+                        return (
+                          <div key={`${item.id}-${idx}`} className="memo-item planner-item">
+                             <div className="memo-body">
+                               <div style={{display:'flex', alignItems:'center', gap:'6px', marginBottom:'4px'}}>
+                                 <span className="memo-time">{item.time}</span>
+                                 <span style={{ fontSize:'0.7rem', color: catInfo.color }}>{catInfo.label}</span>
+                               </div>
+                               <h4 className="memo-title">{item.title}</h4>
+                               {/* (선택) 오른쪽 리스트에도 주소가 필요하면 아래 주석 해제 */}
+                               {/* <p className="memo-address" style={{fontSize:'0.8rem', color:'#888'}}>📍 {item.address}</p> */}
+                             </div>
+                             <button className="remove-btn" onClick={() => setMySchedule(mySchedule.filter((_,i)=>i!==idx))}>✕</button>
                           </div>
-                          <button className="remove-btn" onClick={() => setMySchedule(mySchedule.filter((_, i) => i !== idx))}>
-                            ✕
-                          </button>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-                
-                {/* 하단 저장 버튼 영역 */}
-                <div className="planner-footer-btns" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <button 
-                    className="save-schedule-btn" 
-                    onClick={handleSaveMyPlan}
-                    style={{ background: '#1d1d1f' }}
-                  >
-                    나만의 일정 저장하기 ➔
-                  </button>
+                        );
+                      })
+                    )}
+                 </div>
 
-                  <button 
-                    className="save-schedule-btn" 
-                    onClick={handleSaveAllAI}
-                    style={{ background: '#5D5FEF' }} // AI 전용 색상
-                  >
-                    AI 풀코스 전체 저장하기 🤖
-                  </button>
-                </div>
+                 <div className="planner-footer-btns" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <button className="save-schedule-btn" style={{ background: '#1d1d1f' }} onClick={handleSaveMyPlan}>
+                      나만의 일정 저장하기 ➔
+                    </button>
+                    <button className="save-schedule-btn" style={{ background: '#5D5FEF' }} onClick={handleSaveAllAI}>
+                      AI 풀코스 전체 저장하기 🤖
+                    </button>
+                 </div>
               </aside>
             </div>
 
             {/* 채팅창 */}
             <div className="gemini-search-container">
-              <div className="gemini-search-box">
-                <span className="sparkle-icon">✨</span>
-                <input
-                  type="text"
-                  placeholder="예: 저녁은 좀 더 조용한 곳으로 바꿔줘"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') onSendChat(); }}
-                  disabled={isLoading}
-                />
-                <button className="send-btn" onClick={onSendChat} disabled={isLoading}>
-                  {isLoading ? "..." : "➤"}
-                </button>
-              </div>
+               <div className="gemini-search-box">
+                 <span className="sparkle-icon">✨</span>
+                 <input 
+                    type="text" 
+                    placeholder="예: 저녁은 좀 더 조용한 곳으로 바꿔줘" 
+                    value={chatInput} 
+                    onChange={e=>setChatInput(e.target.value)} 
+                    onKeyDown={e=>{if(e.key==='Enter')onSendChat()}} 
+                    disabled={isLoading}
+                 />
+                 <button className="send-btn" onClick={onSendChat} disabled={isLoading}>➤</button>
+               </div>
             </div>
           </div>
         )}

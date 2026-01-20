@@ -11,6 +11,7 @@ import WritePage from './pages/Write/WritePage';
 import DetailPage from './pages/Detail/DetailPage';
 import WriteInfo from './pages/WriteInfo/WriteInfo';
 import './App.css';
+import MyTravelPage from './pages/MyPage/MyTravelPage';
 
 function App() {
   
@@ -29,6 +30,7 @@ function App() {
           <Route path="/WritePage" element ={<WritePage />} />
           <Route path="/DetailPage" element ={<DetailPage />} />
           <Route path="/WRiteInfo" element ={<WriteInfo />} />
+          <Route path="/my-travels" element={<MyTravelPage />} />
         </Routes>
       </div>
     </Router>
