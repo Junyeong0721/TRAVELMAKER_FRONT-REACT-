@@ -27,8 +27,8 @@ function App() {
           <Route path="/FriendPage" element ={<FriendPage />} />
           <Route path="/CommunityPage" element ={<CommunityPage />} />
           <Route path="/WritePage" element ={<WritePage />} />
-          <Route path="/DetailPage" element ={<DetailPage />} />
-          <Route path="/WRiteInfo" element ={<WriteInfo />} />
+          <Route path="/DetailPage/:idx" element ={<DetailPage />} />
+          <Route path="/WriteInfo" element ={<WriteInfo />} />
         </Routes>
       </div>
     </Router>
