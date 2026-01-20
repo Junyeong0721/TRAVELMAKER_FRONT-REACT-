@@ -31,6 +31,9 @@ function App() {
           <Route path="/DetailPage" element ={<DetailPage />} />
           <Route path="/WRiteInfo" element ={<WriteInfo />} />
           <Route path="/my-travels" element={<MyTravelPage />} />
+          <Route path="/DetailPage/:idx" element ={<DetailPage />} />
+          <Route path="/WriteInfo" element ={<WriteInfo />} />
+          
         </Routes>
       </div>
     </Router>
