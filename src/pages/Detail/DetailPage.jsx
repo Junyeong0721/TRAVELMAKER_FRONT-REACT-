@@ -1,7 +1,28 @@
-import React, { useState } from 'react';
+import React, { use } from 'react';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import './DetailPage.css';
+import { boardDetail } from '../api/게시판상세보기/detailService';
 
 const CommunityDetail = () => {
+  const { idx } = useParams();
+  const [detail, setDetail] = useState(null);
+  useEffect(()=>{
+    boardDetail(idx)
+    .then(res => {
+      if(res.status === 200){
+        console.log(res.data);
+        setDetail(res.data);
+      }
+      
+      
+    }).catch(err => console.error(err));
+  }, [idx]);
+  if(!detail){
+    return <div>Loading...</div>;
+  }
+
+
   // 게시글 및 로드맵 더미 데이터
   const post = {
     title: "에메랄드 빛 바다와 완벽한 휴식, 나의 첫 번째 제주 한 달 살기 기록",
