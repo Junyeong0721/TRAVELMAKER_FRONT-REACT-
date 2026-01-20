@@ -29,6 +29,7 @@ function App() {
           <Route path="/WritePage" element ={<WritePage />} />
           <Route path="/DetailPage" element ={<DetailPage />} />
           <Route path="/WRiteInfo" element ={<WriteInfo />} />
+           
         </Routes>
       </div>
     </Router>
