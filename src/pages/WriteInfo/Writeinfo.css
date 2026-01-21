@@ -10,7 +10,7 @@
 .mypage-wrapper {
   background-color: var(--bg);
   min-height: 100vh;
-  padding: 50px 0;
+  padding: 0px 0;
   font-family: 'Pretendard', sans-serif;
 }
 
@@ -115,4 +115,4 @@
   width: 35px; height: 35px; border: none; background: white;
   border-radius: 8px; cursor: pointer; color: #777;
 }
-.page-num.active { background: var(--primary); color: white; font-weight: bold; }
+.page-num.active { background: var(--primary); color: white; font-weight: bold; }      
