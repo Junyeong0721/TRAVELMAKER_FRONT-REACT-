@@ -69,7 +69,7 @@ const Main = () => {
       </section>
 
       {/* Category Filter Bar */}
-      <div className="filter-bar">q
+      <div className="filter-bar">
         <button className="filter-item active">🔵 모두 보기</button>
         <button className="filter-item">🪄 AI</button>
         <button className="filter-item">📊 프레젠테이션</button>

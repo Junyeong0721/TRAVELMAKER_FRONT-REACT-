@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import './DetailPage.css';
 import { boardDetail } from '../api/게시판상세보기/detailService';
+import { comment } from '../api/comment/commentService';
+import { getCookie } from '../../js/getToken';
 
 const CommunityDetail = () => {
   const { idx } = useParams();
@@ -22,6 +24,31 @@ const CommunityDetail = () => {
     return <div>Loading...</div>;
   }
   const { post, roadmap, comments } = detail;
+
+  function inputcomment(){
+    const content = document.getElementById("content");
+    const token = getCookie('token');
+    if (!content.value.trim()) {
+      alert("내용을 입력해주세요.");
+      return;
+    }
+    console.log(idx);
+
+    const obj = {
+      content: content.value,   
+      token: token,
+      postIdx: idx
+    }
+    console.log(obj);
+    comment(obj)
+    .then(res => {
+      if(res.status === 200){
+        console.log(res.data);
+        window.location.reload();
+      }
+    })
+    
+  }
 
 
   return (
@@ -111,8 +138,8 @@ const CommunityDetail = () => {
             <div className="comment-input-area">
               <div className="comment-user-img"></div>
               <div className="input-box">
-                <textarea placeholder="댓글을 남겨주세요..."></textarea>
-                <button className="submit-comment">등록하기</button>
+                <textarea placeholder="댓글을 남겨주세요..." id = "content"></textarea>
+                <button className="submit-comment" onClick={inputcomment}>등록하기</button>
               </div>
             </div>
           </section>
