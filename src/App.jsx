@@ -31,7 +31,7 @@ function App() {
           <Route element={<HeaderLayout />}>
             <Route path="/MyPage" element ={<MyPage />} />
             <Route path="/FriendPage" element ={<FriendPage />} />
-            <Route path="/CommunityPage" element ={<CommunityPage />} />
+            <Route path="/CommunityPage" element       ={<CommunityPage />} />
             <Route path="/WriteInfo" element ={<WriteInfo />} />
           </Route>
 
