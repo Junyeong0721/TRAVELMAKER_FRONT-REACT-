@@ -93,7 +93,7 @@ const Community = () => {
               <span className="search-icon">🔍</span>
               <input type="text" placeholder="여행지, 키워드, MBTI로 검색해보세요" />
             </div>
-            <button className="write-post-btn" onClick={e => ViewList(1)}>검색</button>
+            <button className="write-post-btn" onClick={e => console.log(posts.thumbnail)}>검색</button>
             <button className="write-post-btn" onClick={e=> navigate('/WritePage')}>➕ 글쓰기</button>
           </div>
 
@@ -107,7 +107,7 @@ const Community = () => {
             {posts.map(post => (
               <article key={post.idx} className="post-card" onClick={e => navigate(`/DetailPage/${post.idx}`)} style={{ cursor: 'pointer' }}>
                 <div className="post-img-box">
-                  <img src='https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=500&q=80' alt={post.title} />
+                  <img src={post.thumbnail} alt={post.title} />
                 </div>
                 <div className="post-info">
                   <h3 className="post-title">{post.title}</h3>
