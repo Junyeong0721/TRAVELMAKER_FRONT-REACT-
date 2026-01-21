@@ -10,6 +10,7 @@ import CommunityPage from './pages/Community/CommunityPage';
 import WritePage from './pages/Write/WritePage';
 import DetailPage from './pages/Detail/DetailPage';
 import WriteInfo from './pages/WriteInfo/WriteInfo';
+import HeaderLayout from './pages/Components/HeaderLayout';
 import './App.css';
 
 function App() {
@@ -20,12 +21,16 @@ function App() {
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/main" element={<Main />} />
           <Route path="/Sign" element ={<SignUp />} />
-          <Route path="/MyPage" element ={<MyPage />} />
           <Route path="/AiPage" element ={<AiPage />} />
-          <Route path="/FriendPage" element ={<FriendPage />} />
-          <Route path="/CommunityPage" element ={<CommunityPage />} />
+          <Route path="/main" element={<Main />} />
+
+          <Route element={<HeaderLayout />}>
+            <Route path="/MyPage" element ={<MyPage />} />
+            <Route path="/FriendPage" element ={<FriendPage />} />
+            <Route path="/CommunityPage" element ={<CommunityPage />} />
+            <Route path="/WriteInfo" element ={<WriteInfo />} />
+          </Route>
           <Route path="/WritePage" element ={<WritePage />} />
           <Route path="/DetailPage" element ={<DetailPage />} />
           <Route path="/WRiteInfo" element ={<WriteInfo />} />
