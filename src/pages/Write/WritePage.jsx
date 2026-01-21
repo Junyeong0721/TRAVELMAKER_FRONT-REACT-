@@ -11,6 +11,24 @@ const PostWrite = () => {
   const navigate = useNavigate();
   const editorRef = useRef(null); // 에디터 내용을 가져오기 위한 ref
   const [title, setTitle] = useState(''); // 제목 상태 관리
+ // 1. 썸네일 이미지를 담을 상태 (하나만 저장)
+  const [thumbnail, setThumbnail] = useState('');
+
+  // 2. 파일 선택 시 실행되는 함수
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]; // 무조건 첫 번째 파일만 선택
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setThumbnail(reader.result); // Base64 경로 저장
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const 삭제하기 = (e) => {
+    e.stopPropagation(); // 영역 클릭 이벤트가 겹치지 않게 방지
+    setThumbnail('');    // 상태를 빈 값으로 만들어 미리보기를 지움
+  };
 
   // 게시하기 버튼 클릭 시 실행
  const 글쓰기 = () => {
@@ -23,6 +41,7 @@ const PostWrite = () => {
     const obj = {
       title: title.value,      // 제목 상태값
       content: content,  // 에디터 HTML 내용
+      thumbnail: thumbnail,
       planidx: 1, 
       token: token
     };
@@ -123,24 +142,31 @@ const PostWrite = () => {
             <div className="sidebar-card">
               <div className="card-header">
                 <span className="icon">🖼️</span>
-                <h4>미디어 업로드</h4>
+                <h4>대표 썸네일</h4>
               </div>
-              <div className="upload-zone">
-                <div className="upload-info">
-                  <div className="upload-icon">📸</div>
-                  <p>당신의 여행 사진을 공유해보세요</p>
-                  <span>사진 또는 영상을 이곳으로 드래그하거나<br/>클릭하여 파일을 선택하세요.</span>
-                </div>
+              <div className="upload-zone" onClick={() => document.getElementById('thumb-input').click()} style={{ cursor: 'pointer' }}>
+                <input 
+                  type="file" 
+                  id="thumb-input" 
+                  accept="image/*" 
+                  onChange={handleFileChange} 
+                  style={{ display: 'none' }} 
+                />
+                {thumbnail ? (
+                      /* 이미지가 있을 때: 미리보기 이미지 출력 */
+                      <div className="upload-info">
+                        <img src={thumbnail} alt="썸네일 미리보기" style={{ width: '100%', borderRadius: '8px' }} />
+                        <p style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>클릭하여 사진 변경</p>
+                      </div>
+                    ) : (
+                      /* 이미지가 없을 때: 기본 UI */
+                      <div className="upload-info">
+                        <div className="upload-icon">📸</div>
+                        <p>대표 사진을 선택해주세요</p>
+                        <span>목록에 보여질 썸네일입니다.</span>
+                      </div>
+                    )}
                 <button className="btn-file-select">파일 선택</button>
-              </div>
-              
-              <div className="uploaded-list">
-                <div className="upload-count">업로드된 파일 (0) <span>최대 10장</span></div>
-                <div className="file-grid">
-                  <div className="file-placeholder">🖼️</div>
-                  <div className="file-placeholder">🖼️</div>
-                  <div className="file-add-btn">+</div>
-                </div>
               </div>
 
               <div className="upload-tip">

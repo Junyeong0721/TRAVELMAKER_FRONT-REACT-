@@ -66,7 +66,7 @@ const Community = () => {
             <div className="writer-card-content">
               <h3>나만의 여행 작가가 되어보세요!</h3>
               <p>나의 특별한 여행 경험을 공유하고 다른 여행자들에게 영감을 주세요.</p>
-              <button className="guide-btn">가이드 작성하기</button>
+              <button className="guide-btn" onClick={e => navigate('/WritePage')}>가이드 작성하기</button>
             </div>
           </section>
         </aside>
@@ -78,7 +78,7 @@ const Community = () => {
               <span className="search-icon">🔍</span>
               <input type="text" placeholder="여행지, 키워드, MBTI로 검색해보세요" />
             </div>
-            <button className="write-post-btn" onClick={e => ViewList(1)}>검색</button>
+            <button className="write-post-btn" onClick={e => console.log(posts.thumbnail)}>검색</button>
             <button className="write-post-btn" onClick={e=> navigate('/WritePage')}>➕ 글쓰기</button>
           </div>
 
@@ -90,9 +90,9 @@ const Community = () => {
           {/* 포스트 그리드 */}
           <div className="post-grid" key={posts.length}>
             {posts.map(post => (
-              <article key={post.idx} className="post-card">
+              <article key={post.idx} className="post-card" onClick={e => navigate(`/DetailPage/${post.idx}`)} style={{ cursor: 'pointer' }}>
                 <div className="post-img-box">
-                  <img src='https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=500&q=80' alt={post.title} />
+                  <img src={post.thumbnail} alt={post.title} />
                 </div>
                 <div className="post-info">
                   <h3 className="post-title">{post.title}</h3>
