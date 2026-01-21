@@ -131,6 +131,7 @@ const MyTravelPage = () => {
   // 데이터 불러오기
   const fetchPlans = async () => {
     setIsLoading(true);
+
     try {
       const res = await api.get("/plans/list/1"); // ★ userIdx
       if (res.data) setSavedPlans(res.data);

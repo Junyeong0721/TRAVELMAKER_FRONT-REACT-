@@ -65,6 +65,8 @@ const MyPage = () => {
               <div className="menu-item">👤 내 정보 관리</div>
               <div className="menu-item active">🔖 저장된 여행지</div>
               <div className="menu-item">⚙️ AI 맞춤 설정</div>
+              <div className="menu-item">🧠 MBTI 분석</div>
+              <div className="menu-item">🔖 저장된 여행지</div>
               <div className="menu-item logout">📤 로그아웃</div>
             </nav>
           </aside>
