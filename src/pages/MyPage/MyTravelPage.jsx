@@ -120,7 +120,7 @@ const TravelPlanCard = ({ plan, onDelete, onEdit }) => {
       )}
     </div>
   );
-};
+};  
 
 // --- 메인 페이지 컴포넌트 ---
 const MyTravelPage = () => {
@@ -128,18 +128,19 @@ const MyTravelPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // 데이터 불러오기
-  const fetchPlans = async () => {
-    setIsLoading(true);
-    try {
-      const res = await api.get("/plans/list/1"); // ★ userIdx
-      if (res.data) setSavedPlans(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+ // 데이터 불러오기
+const fetchPlans = async () => {
+  setIsLoading(true);
+  try {
+    const res = await api.get("/plans/list"); 
+    
+    if (res.data) setSavedPlans(res.data);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchPlans();
