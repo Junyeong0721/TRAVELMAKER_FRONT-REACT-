@@ -162,16 +162,10 @@ const MyTravelPage = () => {
     }
   };
 
-  // ★ [기능] 수정 핸들러 (임시)
+
   const handleEdit = (planIdx) => {
-    // 나중에 수정 페이지로 이동시키거나 모달을 띄우면 됩니다.
-    const newTitle = prompt("변경할 여행 제목을 입력하세요:");
-    if (newTitle) {
-      // 제목 수정 API 호출 로직 추가 가능
-      console.log(`계획 ${planIdx} 제목 변경: ${newTitle}`);
-      // UI 업데이트 (임시)
-      setSavedPlans(prev => prev.map(p => p.planIdx === planIdx ? {...p, title: newTitle} : p));
-    }
+    // 수정 페이지로 이동 (ID를 들고 감)
+    navigate(`/plan/edit/${planIdx}`);
   };
 
   return (
