@@ -11,6 +11,9 @@ import WritePage from './pages/Write/WritePage';
 import DetailPage from './pages/Detail/DetailPage';
 import WriteInfo from './pages/WriteInfo/WriteInfo';
 import './App.css';
+import MyTravelPage from './pages/MyPage/MyTravelPage';
+import PlanEditPage from './pages/PlanEditPage';
+
 
 function App() {
   
@@ -27,8 +30,13 @@ function App() {
           <Route path="/FriendPage" element ={<FriendPage />} />
           <Route path="/CommunityPage" element ={<CommunityPage />} />
           <Route path="/WritePage" element ={<WritePage />} />
+          <Route path="/DetailPage" element ={<DetailPage />} />
+          <Route path="/WRiteInfo" element ={<WriteInfo />} />
+          <Route path="/my-travels" element={<MyTravelPage />} />
           <Route path="/DetailPage/:idx" element ={<DetailPage />} />
           <Route path="/WriteInfo" element ={<WriteInfo />} />
+          <Route path="/plan/edit/:planIdx" element={<PlanEditPage />} />
+          
         </Routes>
       </div>
     </Router>
