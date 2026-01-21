@@ -1,199 +1,138 @@
 /* 기본 설정 */
-
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Pretendard', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .login-page {
-    width: 100vw;
-    height: 100vh;
-    background-color: #ffd54f;
-    background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .ticket-container {
-    display: flex;
-    width: 900px;
-    /* 고정 높이 대신 min-height를 사용하여 유연하게 대응 */
-    min-height: 520px;
-    filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.25));
-    border-radius: 24px;
-    overflow: hidden;
+  display: flex;
+  width: 900px;
+  /* 고정 높이 대신 min-height를 사용하여 유연하게 대응 */
+  min-height: 520px;
+  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.25));
+  border-radius: 24px;
+  overflow: hidden;
 }
-
 
 /* 왼쪽 섹션 (파란색) */
-
 .ticket-info {
-    flex: 1.2;
-    background: linear-gradient(135deg, #4f63ff 0%, #6a47ff 100%);
-    padding: 50px 40px;
-    color: white;
-    display: flex;
-    flex-direction: column;
+  flex: 1.2;
+  background: linear-gradient(135deg, #4f63ff 0%, #6a47ff 100%);
+  padding: 50px 40px;
+  color: white;
+  display: flex;
+  flex-direction: column;
 }
 
-.logo-text {
-    font-size: 2.2rem;
-    font-weight: 800;
-}
+.logo-text { font-size: 2.2rem; font-weight: 800; }
+.logo-subtext { font-size: 0.9rem; opacity: 0.8; margin-top: -5px; }
 
-.logo-subtext {
-    font-size: 0.9rem;
-    opacity: 0.8;
-    margin-top: -5px;
-}
-
-.info-section {
-    margin-top: 50px;
-}
-
-.info-group label {
-    font-size: 0.75rem;
-    opacity: 0.7;
-    letter-spacing: 1px;
-}
-
-.info-value {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-top: 5px;
-}
+.info-section { margin-top: 50px; }
+.info-group label { font-size: 0.75rem; opacity: 0.7; letter-spacing: 1px; }
+.info-value { font-size: 2rem; font-weight: 700; margin-top: 5px; }
 
 .divider-line {
-    height: 1px;
-    background: rgba(255, 255, 255, 0.2);
-    margin: 30px 0;
-    position: relative;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 30px 0;
+  position: relative;
 }
 
 .plane-symbol {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #5d58ff;
-    padding: 0 10px;
-    font-size: 1.2rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #5d58ff;
+  padding: 0 10px;
+  font-size: 1.2rem;
 }
 
-.info-footer {
-    display: flex;
-    gap: 40px;
-    margin-top: auto;
-}
-
-.style-find-text {
-    font-size: 0.9rem;
-    margin-top: 30px;
-    opacity: 0.8;
-}
-
+.info-footer { display: flex; gap: 40px; margin-top: auto; }
+.style-find-text { font-size: 0.9rem; margin-top: 30px; opacity: 0.8; }
 
 /* 오른쪽 섹션 (크림색) */
-
 .ticket-form {
-    flex: 2;
-    background-color: #fffde7;
-    padding: 40px 60px;
-    position: relative;
-    /* 자식 요소들을 세로로 배치하고 여백 조절을 가능하게 함 */
-    display: flex;
-    flex-direction: column;
+  flex: 2;
+  background-color: #fffde7; 
+  padding: 40px 60px;
+  position: relative;
+  /* 자식 요소들을 세로로 배치하고 여백 조절을 가능하게 함 */
+  display: flex;
+  flex-direction: column;
 }
 
-.form-title {
-    font-size: 2.4rem;
-    margin-bottom: 30px;
-    color: #222;
-}
+.form-title { font-size: 2.4rem; margin-bottom: 30px; color: #222; }
 
-.input-group {
-    margin-bottom: 20px;
-}
-
-.input-group label {
-    display: block;
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; font-size: 0.9rem; color: #555; margin-bottom: 8px; font-weight: 600; }
 .input-group input {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    font-size: 1rem;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
 }
 
-.password-wrapper {
-    position: relative;
-}
-
-.eye-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #bbb;
-}
+.password-wrapper { position: relative; }
+.eye-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #bbb; }
 
 .form-options {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
-    font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  font-size: 0.9rem;
 }
 
 .login-submit-btn {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(to right, #4f63ff, #6a47ff);
-    color: white;
-    border: none;
-    border-radius: 14px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(to right, #4f63ff, #6a47ff);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
 }
 
-
 /* 핵심 수정 부분: 회원가입 문구 */
-
 .signup-prompt {
-    /* margin-top: auto를 통해 위쪽 요소들과 상관없이 항상 바닥에 밀착 */
-    margin-top: auto;
-    padding-top: 20px;
-    display: flex;
-    cursor: pointer;
-    justify-content: center;
-    gap: 10px;
-    font-size: 0.95rem;
-    color: #777;
+  /* margin-top: auto를 통해 위쪽 요소들과 상관없이 항상 바닥에 밀착 */
+  margin-top: auto; 
+  padding-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: #777;
 }
 
 .signup-link {
-    color: #4f63ff;
-    font-weight: 700;
-    text-decoration: none;
+  color: #4f63ff;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .corner-tag {
-    position: absolute;
-    top: 25px;
-    right: 25px;
-    width: 25px;
-    height: 25px;
-    background-color: #ffd54f;
-    transform: rotate(45deg);
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  width: 25px;
+  height: 25px;
+  background-color: #ffd54f;
+  transform: rotate(45deg);
 }

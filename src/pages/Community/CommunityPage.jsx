@@ -49,21 +49,6 @@ const Community = () => {
 
   return (
     <div className="community-wrapper">
-      {/* 헤더 */}
-      <header className="header">
-        <div className="header-inner">
-          <h1 className="logo">TripMate <small>AI Travel</small></h1>
-          <nav className="header-nav">
-            <span>홈</span><span>기능</span><span>여행지</span><span className="active">커뮤니티</span><span>도움말</span>
-          </nav>
-          <div className="header-right">
-            <span>🌙</span>
-            <div className="profile-circle"></div>
-            <span className="user-name">김여행</span>
-          </div>
-        </div>
-      </header>
-
       <div className="community-container">
         {/* 사이드바 */}
         <aside className="sidebar">

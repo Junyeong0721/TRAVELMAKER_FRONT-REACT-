@@ -18,20 +18,7 @@ body {
 .friend-page-wrapper { width: 100%; }
 
 /* Header */
-.header { background: #fff; border-bottom: 1px solid #eee; padding: 15px 0; }
-.header-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-}
-.logo { font-size: 1.2rem; color: var(--primary-purple); font-weight: 800; }
-.logo span { font-size: 0.8rem; color: #aaa; margin-left: 5px; font-weight: 400; }
-.header-nav span { margin: 0 15px; font-size: 0.95rem; color: #666; cursor: pointer; }
-.header-right { display: flex; align-items: center; gap: 15px; }
-.profile-circle { width: 32px; height: 32px; background: #FFDAB9; border-radius: 50%; }
+
 
 /* Main Container */
 .friend-container {

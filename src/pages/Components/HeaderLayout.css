@@ -1,0 +1,88 @@
+/* 1. 초기화 및 전체 설정 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Pretendard', sans-serif;
+  background-color: #F8F9FD; /* 전체 페이지 배경색 */
+  color: #333;
+}
+
+.app-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 2. 헤더 디자인 */
+.header {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+  position: sticky; /* 스크롤 시 상단 고정 (선택사항) */
+  top: 0;
+  z-index: 1000;
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.logo-link {
+  text-decoration: none;
+}
+
+.logo {
+  font-size: 1.25rem;
+  color: #5D5FEF;
+  font-weight: 800;
+}
+
+.logo span {
+  font-size: 0.8rem;
+  color: #aaa;
+  font-weight: 400;
+  margin-left: 5px;
+}
+
+.header-nav a, .header-nav span {
+  margin: 0 15px;
+  font-size: 0.95rem;
+  color: #666;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.header-nav a:hover {
+  color: #5D5FEF;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-profile-circle {
+  width: 32px;
+  height: 32px;
+  background-color: #FFDAB9;
+  border-radius: 50%;
+}
+
+/* 3. 메인 컨텐츠 영역 여백 */
+.main-content {
+  flex: 1;
+  /* 헤더 아래로 내용이 바로 붙지 않게 약간의 여백을 줌 */
+  padding-bottom: 50px;
+}
