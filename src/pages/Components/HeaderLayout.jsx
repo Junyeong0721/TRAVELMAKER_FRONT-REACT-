@@ -49,7 +49,7 @@ const Layout = () => {
               // 1. 로그인 상태일 때: 프로필과 닉네임 표시
               <>
                 <div className="user-profile-circle"></div>
-                <span className="user-name">{nickname}님</span>
+                <span className="user-name" style={{ cursor: 'pointer' }} onClick={() => navigate('/mypage')}>{nickname}님</span>
                 <button onClick={() => {handleLogout()}}>로그아웃</button>
               </>
             ) : (
