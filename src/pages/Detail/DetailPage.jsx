@@ -156,7 +156,6 @@ const CommunityDetail = () => {
           <div className="about-author-card">
             <p className="about-label">ABOUT AUTHOR</p>
             <div className="author-card-content">
-              <div className="author-avatar-large"></div>
               <div className="author-card-info">
                 <h4>{post.nickname}</h4>
                 <p>{post.userGrade}</p>
