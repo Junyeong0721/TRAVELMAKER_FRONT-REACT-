@@ -6,6 +6,7 @@ import { getCookie } from '../../js/getToken.js';
 
 
 const Main = () => {
+  
   const navigate = useNavigate();
   
   // 3. 로그인 상태와 유저 정보를 담을 state 추가

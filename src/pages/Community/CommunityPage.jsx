@@ -98,7 +98,7 @@ const Community = () => {
                   <h3 className="post-title">{post.title}</h3>
                   <div className="post-footer">
                     <div className="author-info">
-                      <div className="author-avatar small"></div>
+
                       <div className="author-text">
                         <span className="author-name">{post.nickname}</span>
                         <span className="author-mbti">{post.mbti}</span>
