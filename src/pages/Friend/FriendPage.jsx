@@ -48,7 +48,6 @@ const FriendPage = () => {
               <div className="menu-item">⚙️ AI 맞춤 설정</div>
               <div className="menu-item">🧠 MBTI 분석</div>
               <div className="menu-item">🔖 저장된 여행지</div>
-              <div className="menu-item logout">📤 로그아웃</div>
             </nav>
 
             <div className="invite-banner">
@@ -64,10 +63,8 @@ const FriendPage = () => {
           {/* 오른쪽 친구 리스트 */}
           <section className="friend-list-area">
             <div className="filter-tabs">
-              <button className="tab active">전체 친구 (42)</button>
-              <button className="tab">즐겨찾기</button>
-              <button className="tab">최근 활동</button>
-              <button className="tab">같은 MBTI</button>
+              <button className="tab active">팔로잉</button>
+              <button className="tab">팔로워</button>
             </div>
 
             <div className="friend-list-card">
