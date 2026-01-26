@@ -6,6 +6,7 @@ import { getCookie } from '../../js/getToken.js';
 
 
 const Main = () => {
+  
   const navigate = useNavigate();
   
   // 3. 로그인 상태와 유저 정보를 담을 state 추가
@@ -39,7 +40,7 @@ const Main = () => {
           {/* 6. 조건부 렌더링 적용 */}
           {nickname ? (
             <div className="login-user-info">
-              <span className="user-nickname"><strong>{nickname}</strong>님</span>
+              <span className="user-nickname" onClick={() => navigate('/mypage')}><strong>{nickname}</strong>님</span>
               <button className="logout-btn" onClick={handleLogout} style={{marginLeft: '10px'}}>로그아웃</button>
             </div>
           ) : (
@@ -70,11 +71,11 @@ const Main = () => {
 
       {/* Category Filter Bar */}
       <div className="filter-bar">
-        <button className="filter-item active"> 모두 보기</button>
-        <button className="filter-item"> AI</button>
-        <button className="filter-item"> 프레젠테이션</button>
-        <button className="filter-item"> SNS</button>
-        <button className="filter-item"> 동영상</button>
+        <button className="filter-item active">🔵 모두 보기</button>
+        <button className="filter-item">🪄 AI</button>
+        <button className="filter-item">📊 프레젠테이션</button>
+        <button className="filter-item">⭐ SNS</button>
+        <button className="filter-item">👥 동영상</button>
       </div>
 
       {/* Feature Cards Section (컬러 카드 유지) */}

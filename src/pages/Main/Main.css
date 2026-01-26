@@ -31,17 +31,14 @@
     /* 살짝 그림자 추가 */
 }
 
-.logo {
-  font-size: 1.25rem;
-  color: #5D5FEF;
-  font-weight: 800;
+.logo-link {
+    text-decoration: none;
 }
 
-.logo span {
-  font-size: 0.8rem;
-  color: #aaa;
-  font-weight: 400;
-  margin-left: 5px;
+.logo {
+    font-size: 1.25rem;
+    color: #5D5FEF;
+    font-weight: 800;
 }
 
 .nav-links a {
