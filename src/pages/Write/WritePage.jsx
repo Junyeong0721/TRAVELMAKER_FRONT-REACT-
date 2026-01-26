@@ -15,6 +15,8 @@ const PostWrite = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 팝업 열기/닫기
   const [plannerList, setPlannerList] = useState([]);    // 서버에서 받은 리스트 저장
   const [selectedPlanner, setSelectedPlanner] = useState(null); // 선택된 플래너 {idx, title}
+
+  
   function planner(){
     const token = getCookie('token');
     SelectPlan(token)
@@ -48,6 +50,7 @@ const PostWrite = () => {
     const title = document.getElementById("title");
     const content = editorRef.current.getContent(); 
     const token = getCookie('token'); 
+
 
     // 서버로 보낼 데이터 객체 구성
     const obj = {

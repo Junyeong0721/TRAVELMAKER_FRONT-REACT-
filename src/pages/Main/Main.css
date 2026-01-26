@@ -31,18 +31,14 @@
     /* 살짝 그림자 추가 */
 }
 
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #7b2ff7;
-    /* 로고 색상 포인트 */
+.logo-link {
+    text-decoration: none;
 }
 
-.logo-sub {
-    font-size: 0.8rem;
-    font-weight: normal;
-    display: block;
-    color: #666;
+.logo {
+    font-size: 1.25rem;
+    color: #5D5FEF;
+    font-weight: 800;
 }
 
 .nav-links a {

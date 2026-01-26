@@ -310,23 +310,7 @@ const AIPage = () => {
       )}
 
       {/* 헤더 */}
-      <header className="header">
-        <div className="header-inner">
-          <h1 className="logo">TripMate <small>AI Travel</small></h1>
-          <nav className="header-nav">
-            <span>홈</span>
-            <span className="active">AI 추천</span>
-            <span>여행지</span>
-            <span>커뮤니티</span>
-            <span>마이페이지</span>
-          </nav>
-          <div className="header-right">
-            <span>🌙</span>
-            <div className="profile-circle"></div>
-            <span className="user-name">김여행</span>
-          </div>
-        </div>
-      </header>
+      
 
       <main className="ai-container wide-container">
         {!isSettingsComplete ? (
