@@ -3,6 +3,7 @@ import './Main.css';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getCookie } from '../../js/getToken.js';
+import { getTop3Posts } from '../api/top3/getTop3Posts.js';
 
 
 const Main = () => {
@@ -11,9 +12,19 @@ const Main = () => {
   
   // 3. 로그인 상태와 유저 정보를 담을 state 추가
   const [nickname, setNickname] = useState(null);
+  const [topPosts, setTopPosts] = useState([]);
 
   // 4. 페이지 로드 시 쿠키 확인
   useEffect(() => {
+    getTop3Posts()
+      .then(res => {
+        if (res.status === 200) {
+          setTopPosts(res.data);
+        }
+      })
+      .catch(err => console.error(err)); 
+
+
     const userNick = getCookie('userNickName');
     if (userNick) {
       setNickname(userNick);
@@ -106,32 +117,22 @@ const Main = () => {
 
       {/* Popular Destinations */}
       <section className="destinations">
-        <div className="section-header">
-          <h2>인기 여행지를 둘러보세요</h2>
-          <p>전 세계 여행자들이 가장 사랑하는 여행지</p>
-        </div>
         <div className="destination-grid">
-          <DestinationCard 
-            img="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=500&q=80"
-            rating="4.9"
-            location="발리, 인도네시아"
-            desc="열대 천국의 완벽한 휴양지"
-            reviews="2,453 리뷰"
-          />
-          <DestinationCard 
-            img="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=500&q=80"
-            rating="4.8"
-            location="뉴욕, 미국"
-            desc="잠들지 않는 도시의 활기"
-            reviews="3,892 리뷰"
-          />
-          <DestinationCard 
-            img="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=500&q=80"
-            rating="4.95"
-            location="스위스 알프스"
-            desc="장엄한 산과 자연의 경이로움"
-            reviews="1,876 리뷰"
-          />
+          {topPosts.map((post) => (
+            <div 
+              key={post.idx} 
+              onClick={() => navigate(`/DetailPage/${post.idx}`)} // ✅ 클릭 시 이동
+              style={{ cursor: 'pointer' }} // 클릭 가능하다는 표시
+            >
+              <DestinationCard 
+                img={post.thumbnail}
+                rating={`❤️ ${post.likeCount}`}
+                location={post.title}
+                desc={`👁️ ${post.viewCount} 💬 ${post.commentCount}`}
+                reviews="상세보기"
+              />
+            </div>
+          ))}
         </div>
       </section>
 
