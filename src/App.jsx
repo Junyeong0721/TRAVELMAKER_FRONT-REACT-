@@ -4,15 +4,15 @@ import Login from './pages/Login/Login';
 import Main from './pages/Main/Main';
 import SignUp from './pages/signUp/SignUp'; 
 import MyPage from './pages/MyPage/MyPage';
-import AiPage from './pages/AI/AiPage';
+// import AiPage from './pages/AI/AiPage';
 import FriendPage from './pages/Friend/FriendPage';
 import CommunityPage from './pages/Community/CommunityPage';
 import WritePage from './pages/Write/WritePage';
 import DetailPage from './pages/Detail/DetailPage';
 import WriteInfo from './pages/WriteInfo/WriteInfo';
 import HeaderLayout from './pages/Components/HeaderLayout';
-import MyTravelPage from './pages/MyPage/MyTravelPage';
-import PlanEditPage from './pages/PlanEditPage';
+// import MyTravelPage from './pages/MyPage/MyTravelPage';
+// import PlanEditPage from './pages/PlanEditPage';
 import PlannerWrite from './pages/Planner/PlannerWrite';
 import './App.css';
 
@@ -26,7 +26,7 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
           <Route path="/Sign" element ={<SignUp />} />
-          <Route path="/AiPage" element ={<AiPage />} />
+          {/* <Route path="/AiPage" element ={<AiPage />} /> */}
           <Route path="/main" element={<Main />} />
 
           {/* 공통 헤더 적용 페이지 */}
@@ -41,8 +41,8 @@ function App() {
           {/* 기타 페이지 */}
           <Route path="/WritePage" element ={<WritePage />} />
           <Route path="/DetailPage/:idx" element ={<DetailPage />} />
-          <Route path="/plan/edit/:planIdx" element={<PlanEditPage />} />
-          <Route path="/my-travels" element={<MyTravelPage />} />
+          {/* <Route path="/plan/edit/:planIdx" element={<PlanEditPage />} />
+          <Route path="/my-travels" element={<MyTravelPage />} /> */}
         </Routes>
       </div>
     </Router>

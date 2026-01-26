@@ -33,7 +33,7 @@ const Main = () => {
     <div className="main-container">
       {/* Navbar */}
       <header className="navbar">
-        <div className="logo">✈️ TripMate <span className="logo-sub">Travel Companion</span></div>
+        <div className="logo">TripMate <span className="logo-sub">Travel Companion</span></div>
   
         <div className="nav-actions">
           {/* 6. 조건부 렌더링 적용 */}
@@ -69,12 +69,12 @@ const Main = () => {
       </section>
 
       {/* Category Filter Bar */}
-      <div className="filter-bar">q
-        <button className="filter-item active">🔵 모두 보기</button>
-        <button className="filter-item">🪄 AI</button>
-        <button className="filter-item">📊 프레젠테이션</button>
-        <button className="filter-item">⭐ SNS</button>
-        <button className="filter-item">👥 동영상</button>
+      <div className="filter-bar">
+        <button className="filter-item active"> 모두 보기</button>
+        <button className="filter-item"> AI</button>
+        <button className="filter-item"> 프레젠테이션</button>
+        <button className="filter-item"> SNS</button>
+        <button className="filter-item"> 동영상</button>
       </div>
 
       {/* Feature Cards Section (컬러 카드 유지) */}
