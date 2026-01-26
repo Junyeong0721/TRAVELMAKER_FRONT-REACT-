@@ -34,13 +34,13 @@ const Main = () => {
     <div className="main-container">
       {/* Navbar */}
       <header className="navbar">
-        <div className="logo">✈️ TripMate <span className="logo-sub">Travel Companion</span></div>
+        <div className="logo">TripMate <span className="logo-sub">Travel Companion</span></div>
   
         <div className="nav-actions">
           {/* 6. 조건부 렌더링 적용 */}
           {nickname ? (
             <div className="login-user-info">
-              <span className="user-nickname"><strong>{nickname}</strong>님</span>
+              <span className="user-nickname" onClick={() => navigate('/mypage')}><strong>{nickname}</strong>님</span>
               <button className="logout-btn" onClick={handleLogout} style={{marginLeft: '10px'}}>로그아웃</button>
             </div>
           ) : (

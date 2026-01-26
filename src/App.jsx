@@ -13,6 +13,7 @@ import WriteInfo from './pages/WriteInfo/WriteInfo';
 import HeaderLayout from './pages/Components/HeaderLayout';
 import MyTravelPage from './pages/MyPage/MyTravelPage';
 import PlanEditPage from './pages/PlanEditPage';
+import EditPage from './pages/edit/EditPage';
 import './App.css';
 
 function App() {
@@ -24,18 +25,19 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
           <Route path="/Sign" element ={<SignUp />} />
-          <Route path="/AiPage" element ={<AiPage />} />
           <Route path="/main" element={<Main />} />
 
           {/* 공통 헤더 적용 페이지 */}
           <Route element={<HeaderLayout />}>
             <Route path="/MyPage" element ={<MyPage />} />
             <Route path="/FriendPage" element ={<FriendPage />} />
-            <Route path="/CommunityPage" element       ={<CommunityPage />} />
+            <Route path="/CommunityPage" element ={<CommunityPage />} />
             <Route path="/WriteInfo" element ={<WriteInfo />} />
+            <Route path="/AiPage" element ={<AiPage />} />
           </Route>
 
           {/* 기타 페이지 */}
+          <Route path="/EditPage/:idx" element ={<EditPage />} />
           <Route path="/WritePage" element ={<WritePage />} />
           <Route path="/DetailPage/:idx" element ={<DetailPage />} />
           <Route path="/plan/edit/:planIdx" element={<PlanEditPage />} />
