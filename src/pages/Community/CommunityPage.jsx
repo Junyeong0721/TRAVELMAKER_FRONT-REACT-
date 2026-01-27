@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { boardList } from '../api/게시판테스트/boardService';
 import { useState, useEffect } from 'react';
 import { boardCount } from '../api/게시판테스트/boardCount';
+import { bestList } from '../api/게시판테스트/bestBoardService';
+import { myList } from '../api/게시판테스트/myBoardService';
+import { getCookie } from '../../js/getToken';
 
 
 const Community = () => {
@@ -29,7 +32,6 @@ const Community = () => {
   const ViewList = (pagenum) => {
     const offset = (pagenum - 1) * 4; 
 
-// 페이지 번호에 따른 오프셋 계산
 
     boardList(offset)
           .then(res => {
@@ -45,6 +47,32 @@ const Community = () => {
   useEffect(() => {
     ViewList(1); // 첫 페이지 로드
   }, []);
+  const BestList = (pagenum) => {
+    const offset = (pagenum - 1) * 4; 
+
+
+    bestList(offset)
+          .then(res => {
+            if (res.status === 200) {
+              setPosts(res.data);
+              setCurrentPage(pagenum); // UI 상태는 사용자가 누른 번호로 저장
+            }
+          })
+          .catch(err => console.error(err));
+    };
+  const MyList = (pagenum) => {
+    const offset = (pagenum - 1) * 4; 
+
+    const token = getCookie('token');
+    myList(offset, token)
+          .then(res => {
+            if (res.status === 200) {
+              setPosts(res.data);
+              setCurrentPage(pagenum); // UI 상태는 사용자가 누른 번호로 저장
+            }
+          })
+          .catch(err => console.error(err));
+    };
 
 
   return (
@@ -55,9 +83,9 @@ const Community = () => {
           <section className="category-section">
             <h4>게시판 카테고리</h4>
             <ul>
-              <li className="active"><span>📊</span> 전체 글</li>
-              <li><span>📈</span> 인기 게시글</li>
-              <li><span>📝</span> 내 게시글</li>
+              <li className="active" onClick={e => ViewList(1)}><span>📊</span> 전체 글</li>
+              <li onClick={e => BestList(1)}><span>📈</span> 인기 게시글</li>
+              <li onClick={e => MyList(1)}><span>📝</span> 내 게시글</li>
               <li><span>🔖</span> 저장한 글</li>
             </ul>
           </section>
