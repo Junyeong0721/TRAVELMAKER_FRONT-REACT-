@@ -9,7 +9,10 @@ const AIPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [initialMessage, setInitialMessage] = useState("");
-  const [mySchedule, setMySchedule] = useState([]);
+
+  // 모달 관련 상태
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [saveTitle, setSaveTitle] = useState("");
 
   // 지역 데이터
   const locationData = {
@@ -29,7 +32,7 @@ const AIPage = () => {
 
   const [aiRecommendedSets, setAiRecommendedSets] = useState([]);
 
-  // Fallback 데이터 (API 실패 시 보여줄 예시 데이터)
+  // Fallback 데이터
   const fallbackSets = [
     {
       id: 'set1',
@@ -58,22 +61,6 @@ const AIPage = () => {
           address: '강원 강릉시 율곡로3139번길 24',
           reason: '여유롭게 걸으며 생각을 정리하기 좋습니다.',
           tags: ['역사', '산책', '포토존']
-        },
-        { 
-          id: 'm4', time: '16:00 PM', category: 'CAFE',
-          title: '툇마루 커피', 
-          desc: '흑임자 라떼가 유명한 웨이팅 맛집.',
-          address: '강원 강릉시 난설헌로 232',
-          reason: 'MZ세대에게 핫한 필수 코스입니다.',
-          tags: ['커피', '흑임자', '핫플']
-        },
-        { 
-          id: 'm5', time: '18:00 PM', category: 'RESTAURANT',
-          title: '엄지네 포장마차', 
-          desc: '꼬막 비빔밥으로 하루를 든든하게 마무리.',
-          address: '강원 강릉시 경강로2255번길 21',
-          reason: '현지인도 줄 서서 먹는 검증된 맛집.',
-          tags: ['꼬막', '저녁', '맛집']
         },
       ]
     },
@@ -106,6 +93,28 @@ const AIPage = () => {
           tags: ['디저트', '아이스크림']
         },
       ]
+    },
+    {
+      id: 'set3',
+      day: '3일차',
+      memos: [
+        { 
+          id: 'm9', time: '10:00 AM', category: 'SIGHTSEEING',
+          title: '정동진 레일바이크', 
+          desc: '바다를 보며 달리는 레일바이크 체험.',
+          address: '강원 강릉시 정동진리',
+          reason: '활동적인 ENFP에게 추천하는 액티비티.',
+          tags: ['액티비티', '바다']
+        },
+        { 
+          id: 'm10', time: '13:00 PM', category: 'RESTAURANT',
+          title: '동화가든', 
+          desc: '얼큰한 짬뽕 순두부의 원조.',
+          address: '강원 강릉시 초당순두부길 77번길 15',
+          reason: '해장에 딱 좋은 얼큰한 국물.',
+          tags: ['짬뽕순두부', '맛집']
+        },
+      ]
     }
   ];
 
@@ -128,52 +137,27 @@ const AIPage = () => {
     }
   };
 
-  // 오른쪽 리스트용 카테고리 정보
-  const getCategoryInfo = (category) => {
-    switch (category) {
-      case 'RESTAURANT': return { label: '🍚 식당', color: '#ff7e67', bg: '#fff0ec' };
-      case 'CAFE': return { label: '☕ 카페', color: '#b08d55', bg: '#f7f3eb' };
-      case 'SIGHTSEEING': return { label: '🎡 관광', color: '#6c5ce7', bg: '#f0f0ff' };
-      default: return { label: '📍 장소', color: '#888', bg: '#f5f5f5' };
-    }
-  };
-
-  // --- 핸들러 ---
-  const handleImportItem = (item) => {
-    if (!mySchedule.find(m => m.id === item.id)) {
-      setMySchedule([...mySchedule, item]);
-    }
-  };
-
-  const handleImportSet = (memos) => {
-    const newItems = memos.filter(memo => !mySchedule.find(m => m.id === memo.id));
-    setMySchedule([...mySchedule, ...newItems]);
-  };
-
-  const onDragStart = (e, item) => {
-    e.dataTransfer.setData("item", JSON.stringify(item));
-  };
-
-  const onDragOver = (e) => { e.preventDefault(); };
-
-  const onDrop = (e) => {
-    e.preventDefault();
-    const itemData = JSON.parse(e.dataTransfer.getData("item"));
-    handleImportItem(itemData);
-  };
-
-  // [기능 1] AI 전체 일정 저장
-  const handleSaveAllAI = async () => {
+  // 모달 열기
+  const openSaveModal = () => {
     const targetSets = aiRecommendedSets.length > 0 ? aiRecommendedSets : fallbackSets;
-
     if (!targetSets || targetSets.length === 0) {
       alert("저장할 AI 추천 일정이 없습니다.");
       return;
     }
+    setSaveTitle(`${selectedCity} ${selectedDistrict} AI 여행`);
+    setIsSaveModalOpen(true);
+  };
 
-    if (!window.confirm("AI가 추천한 모든 일정을 DB에 저장하시겠습니까?")) return;
+  // 저장 실행
+  const handleConfirmSave = async () => {
+    if (!saveTitle.trim()) {
+        alert("제목을 입력해야 합니다.");
+        return;
+    }
 
+    const targetSets = aiRecommendedSets.length > 0 ? aiRecommendedSets : fallbackSets;
     const details = [];
+    
     targetSets.forEach((daySet, index) => {
       const currentDay = index + 1;
       daySet.memos.forEach((memo) => {
@@ -187,51 +171,17 @@ const AIPage = () => {
       });
     });
 
-    // ★ 실제 로그인한 유저 ID로 변경 필요 (현재는 테스트용 1)
     const payload = {
       userIdx: 1, 
-      title: `${selectedCity} ${selectedDistrict} AI 풀코스 여행`,
+      title: saveTitle,
       details: details
     };
 
     try {
       const res = await api.post("/plans/save", payload);
       if (res.status === 200) {
-        alert("✅ AI 전체 일정이 저장되었습니다!");
-      }
-    } catch (e) {
-      console.error("저장 에러:", e);
-      alert("일정 저장 중 오류가 발생했습니다.");
-    }
-  };
-
-  // [기능 2] 나만의 일정 저장
-  const handleSaveMyPlan = async () => {
-    if (mySchedule.length === 0) {
-      alert("저장할 일정이 없습니다. 일정을 오른쪽으로 옮겨주세요!");
-      return;
-    }
-
-    if (!window.confirm("내가 선택한 일정을 저장하시겠습니까?")) return;
-
-    const details = mySchedule.map((item) => ({
-      day: 1, // 내 일정은 일단 1일차로 저장 (추후 날짜 선택 기능 확장 가능)
-      time: item.time,
-      title: item.title,
-      address: item.address || "주소 정보 없음",
-      category: item.category || "ETC"
-    }));
-
-    const payload = {
-      userIdx: 1, 
-      title: "내가 직접 만든 강릉 여행",
-      details: details
-    };
-
-    try {
-      const res = await api.post("/plans/save", payload);
-      if (res.status === 200) {
-        alert("✅ 나만의 일정이 저장되었습니다!");
+        alert(`✅ [${saveTitle}] 일정이 저장되었습니다!`);
+        setIsSaveModalOpen(false); 
       }
     } catch (e) {
       console.error("저장 에러:", e);
@@ -265,7 +215,6 @@ const AIPage = () => {
     };
 
     try {
-      // 타임아웃 넉넉하게 설정
       const res = await api.post("/ai/plan", payload, { timeout: 90000 });
 
       if (res?.data?.sets && Array.isArray(res.data.sets)) {
@@ -275,7 +224,6 @@ const AIPage = () => {
       }
     } catch (err) {
       console.error("AI 추천 실패:", err);
-      // 실패 시 fallback 데이터 보여줌
       setAiRecommendedSets(fallbackSets);
     } finally {
       setIsLoading(false);
@@ -291,7 +239,6 @@ const AIPage = () => {
   const onEditSettings = () => {
     setIsSettingsComplete(false);
     setChatInput("");
-    setMySchedule([]);
   };
 
   const onSendChat = async () => {
@@ -328,9 +275,12 @@ const AIPage = () => {
         </div>
       </header>
 
-      <main className="ai-container wide-container">
+      {/* 메인 컨테이너: 설정화면은 그대로, 결과화면만 1600px로 아주 넓게 */}
+      <main className="ai-container wide-container" style={ isSettingsComplete ? { display: 'flex', flexDirection: 'column', alignItems: 'center', width: '95%', maxWidth: '1600px', margin: '0 auto', paddingBottom: '120px' } : {} }>
         {!isSettingsComplete ? (
-          // --- [설정 화면] ---
+          // --------------------------------------------------------
+          // [1. 설정 화면] (기존 디자인 100% 유지 - 800px)
+          // --------------------------------------------------------
           <div className="setup-phase fade-in">
             <section className="intro-section">
               <div className="title-box">
@@ -342,27 +292,52 @@ const AIPage = () => {
 
             <section className="settings-section">
               <div className="settings-grid">
+                
+                {/* 나의 MBTI */}
                 <div className="setting-card">
                   <label>🧬 나의 MBTI</label>
                   <select value={myMbti} onChange={(e) => setMyMbti(e.target.value)}>
-                    <option value="ENFP">ENFP - 재기발랄한 활동가</option>
-                    <option value="INTJ">INTJ - 용의주도한 전략가</option>
                     <option value="ISTJ">ISTJ - 청렴결백한 논리주의자</option>
+                    <option value="ISFJ">ISFJ - 용감한 수호자</option>
+                    <option value="INFJ">INFJ - 통찰력 있는 선지자</option>
+                    <option value="INTJ">INTJ - 용의주도한 전략가</option>
+                    <option value="ISTP">ISTP - 만능 재주꾼</option>
+                    <option value="ISFP">ISFP - 호기심 많은 예술가</option>
                     <option value="INFP">INFP - 열정적인 중재자</option>
+                    <option value="INTP">INTP - 논리적인 사색가</option>
+                    <option value="ESTP">ESTP - 모험을 즐기는 사업가</option>
+                    <option value="ESFP">ESFP - 자유로운 영혼의 연예인</option>
+                    <option value="ENFP">ENFP - 재기발랄한 활동가</option>
                     <option value="ENTP">ENTP - 논쟁을 즐기는 변론가</option>
+                    <option value="ESTJ">ESTJ - 엄격한 관리자</option>
+                    <option value="ESFJ">ESFJ - 사교적인 외교관</option>
+                    <option value="ENFJ">ENFJ - 정의로운 사회운동가</option>
+                    <option value="ENTJ">ENTJ - 대담한 통솔자</option>
                   </select>
                 </div>
 
+                {/* 동행자 MBTI */}
                 <div className="setting-card">
                   <label>👥 동행자 MBTI</label>
                   <select value={partnerMbti} onChange={(e) => setPartnerMbti(e.target.value)}>
                     <option value="none">없음 (혼자 여행)</option>
                     <option value="SAME">나와 같음</option>
-                    <option value="ENFP">ENFP</option>
-                    <option value="INTJ">INTJ</option>
                     <option value="ISTJ">ISTJ</option>
+                    <option value="ISFJ">ISFJ</option>
+                    <option value="INFJ">INFJ</option>
+                    <option value="INTJ">INTJ</option>
+                    <option value="ISTP">ISTP</option>
+                    <option value="ISFP">ISFP</option>
                     <option value="INFP">INFP</option>
+                    <option value="INTP">INTP</option>
+                    <option value="ESTP">ESTP</option>
+                    <option value="ESFP">ESFP</option>
+                    <option value="ENFP">ENFP</option>
                     <option value="ENTP">ENTP</option>
+                    <option value="ESTJ">ESTJ</option>
+                    <option value="ESFJ">ESFJ</option>
+                    <option value="ENFJ">ENFJ</option>
+                    <option value="ENTJ">ENTJ</option>
                   </select>
                 </div>
 
@@ -370,7 +345,6 @@ const AIPage = () => {
                   <label>📍 여행 위치</label>
                   <select value={selectedCity} onChange={(e) => {
                       setSelectedCity(e.target.value);
-                      // 지역 바뀌면 첫 번째 구군으로 자동 선택
                       if (locationData[e.target.value]) {
                         setSelectedDistrict(locationData[e.target.value][0]);
                       }
@@ -429,58 +403,96 @@ const AIPage = () => {
             </section>
           </div>
         ) : (
-          // --- [결과 화면] ---
-          <div className="chat-phase fade-in">
-            <div className="notepad-layout-expanded">
+          // --------------------------------------------------------
+          // [2. 결과 화면] (1600px로 대폭 확장 + 중앙 정렬 + 채팅창 40px)
+          // --------------------------------------------------------
+          <div className="chat-phase fade-in" style={{ width: '100%' }}>
+            
+            {/* 상단 버튼 영역 */}
+            <div className="result-control-bar" style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'20px' }}>
+                <button 
+                  className="reset-btn" 
+                  onClick={onEditSettings}
+                  style={{ padding: '8px 16px', borderRadius: '20px', border: '1px solid #ddd', background: '#fff', cursor: 'pointer', fontWeight:'bold' }}
+                >
+                  ← 설정 다시하기
+                </button>
+                
+                <button 
+                  className="save-schedule-btn" 
+                  style={{ background: '#5D5FEF', color:'white', padding: '10px 20px', borderRadius:'20px', border:'none', cursor:'pointer', fontWeight:'bold', boxShadow:'0 4px 10px rgba(93,95,239,0.3)' }} 
+                  onClick={openSaveModal}
+                >
+                   AI 풀코스 저장하기 💾
+                </button>
+            </div>
+
+            {/* ✅ [핵심] 리스트 영역: 너비 100% 사용, 카드 크게 */}
+            <div className="notepad-layout-expanded" style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
               
-              {/* ▼ 왼쪽: AI 추천 리스트 (세로 컬럼 & 내부 스크롤) ▼ */}
-              <div className="recommendation-scroll-area">
+              <div className="recommendation-scroll-area" style={{ 
+                  display: 'flex', 
+                  gap: '20px', 
+                  width: '100%',
+                  justifyContent: 'center', 
+                  alignItems: 'flex-start' 
+              }}>
                 {(aiRecommendedSets.length ? aiRecommendedSets : fallbackSets).map((set, setIdx) => (
-                  <div key={set.id} className="day-column">
-                    <div className="day-column-header">
-                      <h4><FaCalendarAlt style={{color:'#5D5FEF'}}/> {setIdx + 1}일차</h4>
-                      <button className="import-all-btn-icon" onClick={() => handleImportSet(set.memos)}>
-                        + 전체 담기
-                      </button>
+                  <div key={set.id} className="day-column" style={{ 
+                      flex: 1, // ✅ 남은 공간을 꽉 채움 (아주 넓어짐)
+                      minWidth: '0', 
+                      background: '#fff', 
+                      padding: '25px', 
+                      borderRadius: '20px', 
+                      boxShadow: '0 4px 15px rgba(0,0,0,0.05)', 
+                  }}>
+                    <div className="day-column-header" style={{ marginBottom: '25px', borderBottom: '2px solid #f0f0f0', paddingBottom: '15px' }}>
+                      <h4 style={{ fontSize: '1.3rem', margin: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <FaCalendarAlt style={{color:'#5D5FEF'}}/> {setIdx + 1}일차
+                      </h4>
                     </div>
 
                     <div className="day-timeline">
-                      {set.memos.map((memo) => {
+                      {set.memos.map((memo, mIdx) => {
                         const color = getCategoryColor(memo.category);
                         return (
                           <div
                             key={memo.id}
                             className="timeline-item"
-                            draggable
-                            onDragStart={(e) => onDragStart(e, memo)}
+                            style={{ display: 'flex', gap: '15px', marginBottom: '20px', position: 'relative' }}
                           >
-                            <div className="timeline-marker" style={{ backgroundColor: color, borderColor: color }}>
-                              <span className="category-icon" style={{ color: '#fff' }}>
+                            {/* 타임라인 연결선 */}
+                            {mIdx !== set.memos.length - 1 && (
+                              <div style={{ position: 'absolute', left: '20px', top: '45px', bottom: '-25px', width: '2px', background: '#e0e0e0' }}></div>
+                            )}
+
+                            {/* 마커 */}
+                            <div className="timeline-marker" style={{ 
+                                width: '40px', height: '40px', borderRadius: '50%', 
+                                backgroundColor: color, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                                flexShrink: 0, zIndex: 1, boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+                            }}>
+                              <span className="category-icon" style={{ color: '#fff', fontSize: '1.2rem' }}>
                                 {getCategoryIcon(memo.category)}
                               </span>
                             </div>
                             
-                            <div className="timeline-content">
-                              <div className="time-badge">{memo.time}</div>
-                              <h4 className="place-title">{memo.title}</h4>
+                            {/* 내용 */}
+                            <div className="timeline-content" style={{ flex: 1, background: '#f8f9fa', padding: '15px', borderRadius: '12px', border: '1px solid #eee' }}>
+                              <div className="time-badge" style={{ display:'inline-block', padding:'3px 8px', background:'#eee', borderRadius:'6px', fontSize: '0.8rem', color: '#555', marginBottom: '6px', fontWeight: 'bold' }}>
+                                ⏰ {memo.time}
+                              </div>
+                              <h4 className="place-title" style={{ margin: '4px 0 6px 0', fontSize: '1.1rem', color: '#222' }}>{memo.title}</h4>
                               
-                              {/* ★ 주소 표시 (수정됨) ★ */}
                               {memo.address && (
-                                <p className="place-address">
-                                  📍 {memo.address}
+                                <p className="place-address" style={{ fontSize: '0.85rem', color: '#666', margin: '0 0 8px 0', display:'flex', alignItems:'center', gap:'4px' }}>
+                                  <FaMapMarkerAlt size={12} color="#888"/> {memo.address}
                                 </p>
                               )}
                               
-                              <p className="place-desc">{memo.desc}</p>
-                              
-                              {/* 개별 추가 버튼 */}
-                              <button 
-                                className="add-btn-mini" 
-                                title="내 계획에 추가"
-                                onClick={() => handleImportItem(memo)}
-                              >
-                                <FaPlus size={10} />
-                              </button>
+                              <p className="place-desc" style={{ fontSize: '0.9rem', color: '#444', lineHeight: '1.5', margin: 0 }}>
+                                {memo.desc}
+                              </p>
                             </div>
                           </div>
                         );
@@ -489,67 +501,94 @@ const AIPage = () => {
                   </div>
                 ))}
               </div>
-
-              {/* 오른쪽: 나의 여행 계획장 */}
-              <aside className="my-planner-area" onDragOver={onDragOver} onDrop={onDrop}>
-                 <div className="notepad-header planner-header">
-                   <h4>📝 나의 여행 계획장</h4>
-                   <button className="reset-btn" onClick={onEditSettings}>다시 설정</button>
-                 </div>
-                 
-                 <div className="notepad-content planner-drop-zone">
-                    {mySchedule.length === 0 ? (
-                      <div className="empty-planner-msg">
-                        <p>원하는 일정을 이쪽으로 가져와서<br />나만의 여행을 완성하세요.</p>
-                        <small>(드래그하거나 '가져오기' 버튼 클릭)</small>
-                      </div>
-                    ) : (
-                      mySchedule.map((item, idx) => {
-                        const catInfo = getCategoryInfo(item.category);
-                        return (
-                          <div key={`${item.id}-${idx}`} className="memo-item planner-item">
-                             <div className="memo-body">
-                               <div style={{display:'flex', alignItems:'center', gap:'6px', marginBottom:'4px'}}>
-                                 <span className="memo-time">{item.time}</span>
-                                 <span style={{ fontSize:'0.7rem', color: catInfo.color }}>{catInfo.label}</span>
-                               </div>
-                               <h4 className="memo-title">{item.title}</h4>
-                               {/* (선택) 오른쪽 리스트에도 주소가 필요하면 아래 주석 해제 */}
-                               {/* <p className="memo-address" style={{fontSize:'0.8rem', color:'#888'}}>📍 {item.address}</p> */}
-                             </div>
-                             <button className="remove-btn" onClick={() => setMySchedule(mySchedule.filter((_,i)=>i!==idx))}>✕</button>
-                          </div>
-                        );
-                      })
-                    )}
-                 </div>
-
-                 <div className="planner-footer-btns" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <button className="save-schedule-btn" style={{ background: '#1d1d1f' }} onClick={handleSaveMyPlan}>
-                      나만의 일정 저장하기 ➔
-                    </button>
-                    <button className="save-schedule-btn" style={{ background: '#5D5FEF' }} onClick={handleSaveAllAI}>
-                      AI 풀코스 전체 저장하기 🤖
-                    </button>
-                 </div>
-              </aside>
             </div>
 
-            {/* 채팅창 */}
-            <div className="gemini-search-container">
-               <div className="gemini-search-box">
-                 <span className="sparkle-icon">✨</span>
+            {/* 채팅창 (너비 1600px에 맞춤) */}
+            <div className="gemini-search-container" style={{ 
+                position: 'fixed', 
+                bottom: '40px', 
+                left: '50%', 
+                transform: 'translateX(-50%)', 
+                width: '90%', 
+                maxWidth: '1600px', // ✅ 채팅창도 1600px까지 늘림
+                zIndex: 100 
+            }}>
+               <div className="gemini-search-box" style={{ 
+                   background: '#fff', 
+                   padding: '12px 25px', 
+                   borderRadius: '50px', 
+                   boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+                   display: 'flex',
+                   alignItems: 'center',
+                   gap: '15px',
+                   border: '1px solid #eee'
+               }}>
+                 <span className="sparkle-icon" style={{ fontSize: '1.5rem' }}>✨</span>
                  <input 
-                    type="text" 
-                    placeholder="예: 저녁은 좀 더 조용한 곳으로 바꿔줘" 
-                    value={chatInput} 
-                    onChange={e=>setChatInput(e.target.value)} 
-                    onKeyDown={e=>{if(e.key==='Enter')onSendChat()}} 
-                    disabled={isLoading}
+                   type="text" 
+                   placeholder="AI에게 수정 요청하기 (예: 점심 메뉴를 파스타로 바꿔줘)" 
+                   value={chatInput} 
+                   onChange={e=>setChatInput(e.target.value)} 
+                   onKeyDown={e=>{if(e.key==='Enter')onSendChat()}} 
+                   disabled={isLoading}
+                   style={{ border: 'none', outline: 'none', flex: 1, fontSize: '1.1rem', background:'transparent' }}
                  />
-                 <button className="send-btn" onClick={onSendChat} disabled={isLoading}>➤</button>
+                 <button className="send-btn" onClick={onSendChat} disabled={isLoading} style={{ background: '#5D5FEF', color: 'white', borderRadius: '50%', width: '45px', height: '45px', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize:'1.2rem', transition:'transform 0.2s' }}>
+                    ➤
+                 </button>
                </div>
             </div>
+
+            {/* 모달 (기존 유지) */}
+            {isSaveModalOpen && (
+              <div style={{
+                position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+                backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000,
+                display: 'flex', justifyContent: 'center', alignItems: 'center'
+              }}>
+                <div style={{
+                  backgroundColor: '#fff', padding: '30px', borderRadius: '15px',
+                  width: '400px', boxShadow: '0 5px 20px rgba(0,0,0,0.2)',
+                  display: 'flex', flexDirection: 'column', gap: '20px'
+                }}>
+                  <h3 style={{ margin: 0, fontSize: '1.3rem', color: '#333' }}>여행 계획 저장하기</h3>
+                  <p style={{ margin: 0, color: '#666', fontSize: '0.95rem' }}>나만의 여행 계획 이름을 정해주세요.</p>
+                  
+                  <input 
+                    type="text" 
+                    value={saveTitle} 
+                    onChange={(e) => setSaveTitle(e.target.value)}
+                    placeholder="예: 강릉 힐링 여행"
+                    style={{
+                      padding: '12px', border: '1px solid #ddd', borderRadius: '8px',
+                      fontSize: '1rem', outline: 'none'
+                    }}
+                  />
+                  
+                  <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                    <button 
+                      onClick={() => setIsSaveModalOpen(false)}
+                      style={{
+                        flex: 1, padding: '12px', borderRadius: '8px', border: 'none',
+                        backgroundColor: '#f0f0f0', cursor: 'pointer', fontWeight: 'bold', color: '#555'
+                      }}
+                    >
+                      취소
+                    </button>
+                    <button 
+                      onClick={handleConfirmSave}
+                      style={{
+                        flex: 1, padding: '12px', borderRadius: '8px', border: 'none',
+                        backgroundColor: '#5D5FEF', cursor: 'pointer', fontWeight: 'bold', color: '#fff'
+                      }}
+                    >
+                      저장하기
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </div>
         )}
       </main>

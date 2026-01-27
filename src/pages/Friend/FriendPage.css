@@ -1,4 +1,5 @@
 /* FriendPage.css */
+
 :root {
   --primary-purple: #5D5FEF;
   --bg-color: #F8F9FD;
@@ -16,9 +17,6 @@ body {
 }
 
 .friend-page-wrapper { width: 100%; }
-
-/* Header */
-
 
 /* Main Container */
 .friend-container {
@@ -77,7 +75,7 @@ body {
   margin-bottom: 20px;
   border: 1px solid #f0f0f0;
 }
-.mini-avatar { width: 50px; height: 50px; background: #E0C9A6; border-radius: 50%; }
+.mini-avatar { width: 50px; height: 50px; background: #E0C9A6; border-radius: 50%; background-size: cover; background-position: center; }
 .mini-info strong { display: block; font-size: 1rem; }
 .mini-info span { font-size: 0.8rem; color: var(--text-muted); }
 
@@ -138,6 +136,7 @@ body {
   border-radius: 20px;
   border: 1px solid #eee;
   overflow: hidden;
+  min-height: 200px;
 }
 .friend-item {
   display: flex;
@@ -150,7 +149,13 @@ body {
 .friend-item:last-child { border-bottom: none; }
 
 .friend-avatar-wrapper { position: relative; margin-right: 20px; }
-.friend-avatar { width: 55px; height: 55px; background: #ddd; border-radius: 50%; }
+.friend-avatar-wrapper.small .friend-avatar { width: 40px; height: 40px; }
+
+.friend-avatar { 
+    width: 55px; height: 55px; 
+    background: #ddd; border-radius: 50%; 
+    background-size: cover; background-position: center; 
+}
 .status-dot {
   position: absolute;
   bottom: 2px;
@@ -170,6 +175,7 @@ body {
   padding: 2px 8px;
   border-radius: 4px;
   font-weight: bold;
+  text-transform: uppercase;
 }
 .mbti-tag.entp { background: #F3E8FF; color: #9333EA; }
 .mbti-tag.istj { background: #F1F5F9; color: #475569; }
@@ -193,3 +199,161 @@ body {
 /* Footer */
 .footer { text-align: center; padding: 60px 0; color: #aaa; font-size: 0.85rem; }
 .footer-links { margin-top: 10px; display: flex; justify-content: center; gap: 20px; }
+
+
+/* 로딩/빈 화면 메시지 */
+.loading-msg, .empty-msg {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+  font-size: 14px;
+}
+
+/* 액션 버튼 (팔로우/언팔로우) */
+.friend-action {
+  margin-left: auto; /* 오른쪽 끝으로 밀기 */
+}
+
+.action-btn {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* 팔로우 하기 버튼 (파란색) */
+.action-btn.follow {
+  background-color: #4A90E2;
+  color: white;
+  border: none;
+}
+.action-btn.follow:hover {
+  background-color: #357ABD;
+}
+
+/* 언팔로우 버튼 (회색 테두리) */
+.action-btn.unfollow {
+  background-color: transparent;
+  color: #666;
+  border: 1px solid #ddd;
+}
+.action-btn.unfollow:hover {
+  border-color: #aaa;
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+
+/* ========================================= */
+/* ★ 검색 모달 (Modal) 관련 스타일 추가됨 ★ */
+/* ========================================= */
+
+/* 모달 배경 (어둡게) */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* 반투명 검은 배경 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* 모달 박스 */
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 450px;
+  max-height: 80vh; /* 화면 크기의 80%까지만 */
+  overflow-y: auto; /* 내용 넘치면 스크롤 */
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* 모달 내 검색바 */
+.search-bar-modal {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-bar-modal input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.95rem;
+}
+.search-bar-modal input:focus {
+  border-color: #5D5FEF;
+}
+
+.search-bar-modal button {
+  padding: 0 20px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.search-bar-modal button:hover {
+  background-color: #000;
+}
+
+/* 모달 내 검색 결과 리스트 */
+.search-result-list {
+  flex: 1;
+  overflow-y: auto;
+  border-top: 1px solid #f0f0f0;
+  min-height: 200px; /* 결과 없어도 최소 높이 유지 */
+}
+
+/* 모달 아이템 스타일 재정의 */
+.modal-item {
+  padding: 20px 0;       /* 위아래 여백을 15px -> 20px로 늘림 (내부 공간 확보) */
+  margin-bottom: 15px;   /* ★ 핵심: 아이템끼리 15px만큼 띄움 */
+  border-bottom: 1px solid #f5f5f5; /* 구분선 */
+  display: flex;
+  align-items: center;
+}
+
+/* 마지막 아이템은 밑줄과 여백 없애기 */
+.modal-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.no-result {
+  text-align: center;
+  color: #999;
+  margin-top: 50px;
+}
+
+/* 모달 닫기 버튼 */
+.close-modal-btn {
+  margin-top: 20px;
+  padding: 12px;
+  background-color: #f1f3f5;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #495057;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.close-modal-btn:hover {
+  background-color: #e9ecef;
+}

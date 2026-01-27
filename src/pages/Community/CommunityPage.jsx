@@ -5,7 +5,6 @@ import { boardList } from '../api/게시판테스트/boardService';
 import { useState, useEffect } from 'react';
 import { boardCount } from '../api/게시판테스트/boardCount';
 
-
 const Community = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,30 +17,30 @@ const Community = () => {
   const totalPages = Math.ceil(totalPosts / limit) || 1;
 
   useEffect(() => {
-  // 전체 개수를 가져오는 API 호출 (예: boardCount())
-  boardCount().then(res => {
-    setTotalPosts(res.data);
-  });
-  
-  ViewList(1); // 첫 페이지 목록 불러오기
+    // 전체 개수를 가져오는 API 호출
+    boardCount().then(res => {
+      setTotalPosts(res.data);
+    });
+
+    ViewList(1); // 첫 페이지 목록 불러오기
   }, []);
-  // 3. 데이터를 불러오는 함수
+
+  // 데이터를 불러오는 함수
   const ViewList = (pagenum) => {
-    const offset = (pagenum - 1) * 4; 
+    const offset = (pagenum - 1) * 4;
 
-// 페이지 번호에 따른 오프셋 계산
-
+    // 페이지 번호에 따른 오프셋 계산
     boardList(offset)
-          .then(res => {
-            if (res.status === 200) {
-              setPosts(res.data);
-              setCurrentPage(pagenum); // UI 상태는 사용자가 누른 번호로 저장
-            }
-          })
-          .catch(err => console.error(err));
-    };
+      .then(res => {
+        if (res.status === 200) {
+          setPosts(res.data);
+          setCurrentPage(pagenum); // UI 상태는 사용자가 누른 번호로 저장
+        }
+      })
+      .catch(err => console.error(err));
+  };
 
-  // 5. 페이지가 마운트(로드)될 때 실행되는 useEffect
+  // 페이지가 마운트(로드)될 때 실행되는 useEffect
   useEffect(() => {
     ViewList(1); // 첫 페이지 로드
   }, []);
@@ -79,7 +78,7 @@ const Community = () => {
               <input type="text" placeholder="여행지, 키워드, MBTI로 검색해보세요" />
             </div>
             <button className="write-post-btn" onClick={e => console.log(posts.thumbnail)}>검색</button>
-            <button className="write-post-btn" onClick={e=> navigate('/WritePage')}>➕ 글쓰기</button>
+            <button className="write-post-btn" onClick={e => navigate('/WritePage')}>➕ 글쓰기</button>
           </div>
 
           <div className="content-header">
@@ -88,11 +87,12 @@ const Community = () => {
           </div>
 
           {/* 포스트 그리드 */}
-          <div className="post-grid" key={posts.length}>
+          <div className="post-grid">
             {posts.map(post => (
               <article key={post.idx} className="post-card" onClick={e => navigate(`/DetailPage/${post.idx}`)} style={{ cursor: 'pointer' }}>
                 <div className="post-img-box">
-                  <img src={post.thumbnail} alt={post.title} />
+                  {/* [수정] 썸네일 주소가 있을 때만 이미지를 보여줘서 에러 방지 */}
+                  {post.thumbnail && <img src={post.thumbnail} alt={post.title} />}
                 </div>
                 <div className="post-info">
                   <h3 className="post-title">{post.title}</h3>
@@ -116,10 +116,10 @@ const Community = () => {
           </div>
 
           {/* 페이지네이션 */}
-            <div className="pagination">
+          <div className="pagination">
             {/* 이전 버튼 */}
-            <button 
-              className="page-arrow" 
+            <button
+              className="page-arrow"
               onClick={() => ViewList(currentPage - 1)}
               disabled={currentPage === 1}
             > &lt; </button>
@@ -136,8 +136,8 @@ const Community = () => {
             ))}
 
             {/* 다음 버튼 */}
-            <button 
-              className="page-arrow" 
+            <button
+              className="page-arrow"
               onClick={() => ViewList(currentPage + 1)}
               disabled={currentPage === totalPages || totalPages === 0}
             > &gt; </button>
