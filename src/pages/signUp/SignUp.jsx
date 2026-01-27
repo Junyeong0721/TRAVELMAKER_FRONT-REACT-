@@ -75,6 +75,12 @@ const Signup = () => {
         });
     }
   };
+  const mbtiList = [
+    "ISTJ", "ISFJ", "INFJ", "INTJ",
+    "ISTP", "ISFP", "INFP", "INTP",
+    "ESTP", "ESFP", "ENFP", "ENTP",
+    "ESTJ", "ESFJ", "ENFJ", "ENTJ"
+  ];
 
   return (
     <div className="signup-page">
@@ -129,7 +135,13 @@ const Signup = () => {
 
           <div className="input-group">
             <label>MBTI</label>
-            <input type="text" placeholder="당신의 MBTI를 입력하세요" id="mbti"/>
+            {/* MBTI 입력창을 콤보박스(select)로 변경 */}
+            <select id="mbti" defaultValue="">
+              <option value="" disabled>MBTI를 선택하세요</option>
+              {mbtiList.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
           </div>
 
           <button className="signup-submit-btn" onClick={회원가입}>가입하기</button>

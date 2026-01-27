@@ -14,6 +14,7 @@ import HeaderLayout from './pages/Components/HeaderLayout';
 import MyTravelPage from './pages/MyPage/MyTravelPage';
 import PlanEditPage from './pages/PlanEditPage';
 import EditPage from './pages/edit/EditPage';
+import OtherPage from './pages/OtherPage/otherPage';
 import './App.css';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
             <Route path="/FriendPage" element ={<FriendPage />} />
             <Route path="/CommunityPage" element ={<CommunityPage />} />
             <Route path="/WriteInfo" element ={<WriteInfo />} />
+            <Route path="/OtherPage" element ={<OtherPage/>} />
             <Route path="/AiPage" element ={<AiPage />} />
           </Route>
 

@@ -1,0 +1,184 @@
+.planner-write-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* 상단 영역 */
+.planner-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.planner-top-bar h2 {
+  font-size: 1.7rem;
+  font-weight: 800;
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-draft {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #666;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-complete {
+  background: #5D5FEF;
+  border: none;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* 메인 그리드 */
+.planner-main-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 40px;
+}
+
+/* 제목 입력부 */
+.title-input-box {
+  margin-bottom: 35px;
+}
+
+.title-input-box label {
+  display: block;
+  font-size: 0.75rem;
+  color: #adb5bd;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.title-input-box input {
+  width: 100%;
+  font-size: 1.6rem;
+  border: none;
+  border-bottom: 2px solid #f1f3f5;
+  padding: 10px 0;
+  outline: none;
+}
+
+.itinerary-header {
+  font-size: 0.8rem;
+  color: #adb5bd;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+/* 📒 노트패드 디자인 핵심 */
+.notebook-container {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 20px;
+  position: relative;
+  min-height: 700px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  overflow: hidden;
+}
+
+/* 빨간색 세로선 */
+.notebook-red-line {
+  position: absolute;
+  left: 60px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: rgba(255, 107, 107, 0.4);
+  z-index: 1;
+}
+
+/* 가로 줄눈 div 그룹 */
+.notebook-lines-wrapper {
+  padding-top: 15px;
+  position: relative;
+}
+
+.notebook-line-item {
+  height: 40px; /* 줄 간격 */
+  border-bottom: 1px solid #f1f3f5;
+  margin: 0 20px;
+}
+
+/* 실제 텍스트 입력창 (투명하게 겹침) */
+.notebook-textarea {
+  position: absolute;
+  top: 15px;
+  left: 75px; /* 빨간선 오른쪽에서 시작 */
+  right: 40px;
+  width: calc(100% - 115px);
+  height: calc(100% - 30px);
+  background: transparent;
+  border: none;
+  resize: none;
+  outline: none;
+  font-size: 1rem;
+  line-height: 40px; /* notebook-line-item의 height와 일치시켜야 함 */
+  color: #495057;
+  z-index: 2;
+  font-family: inherit;
+}
+
+/* 사이드바 */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.view-all-link {
+  font-size: 0.75rem;
+  color: #5D5FEF;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* 점선 박스 */
+.import-dashed-box {
+  background: #ffffff;
+  border: 2px dashed #e9ecef;
+  border-radius: 20px;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.folder-icon {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.import-content p {
+  color: #adb5bd;
+  font-size: 0.85rem;
+  margin-bottom: 25px;
+}
+
+.btn-import-action {
+  background: white;
+  border: 1px solid #e9ecef;
+  padding: 8px 20px;
+  border-radius: 10px;
+  color: #5D5FEF;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
