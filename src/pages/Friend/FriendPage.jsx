@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// api 설정 파일 경로가 맞는지 꼭 확인하세요!
-import api from '../api/axiosSetting'; 
+import api from '../api/axiosSetting'; // axios 설정 파일 경로 확인
 import './FriendPage.css';
 
 const FriendPage = () => {
@@ -61,7 +60,6 @@ const FriendPage = () => {
       if (Array.isArray(response.data)) {
         setSearchResult(response.data);
       } else {
-        console.warn("검색 결과가 배열이 아님:", response.data);
         setSearchResult([]); 
       }
 
@@ -72,7 +70,7 @@ const FriendPage = () => {
     }
   };
 
-  // ★ 4. 팔로우/언팔로우 버튼 동작 (수정됨: 모달 닫기 기능 추가)
+  // 4. 팔로우/언팔로우 버튼 동작
   const handleToggleFollow = async (targetIdx) => {
     try {
       // API 요청 (팔로우 또는 언팔로우 토글)
@@ -83,10 +81,10 @@ const FriendPage = () => {
       // 1. 메인 목록(뒷배경) 새로고침
       fetchFollowList(); 
       
-      // 2. 모달이 열려있다면 -> 닫아버리기 (요청하신 기능)
+      // 2. 모달이 열려있다면 -> 검색 결과 새로고침 or 닫기
       if (isModalOpen) {
+        // 검색 결과를 갱신하고 싶다면 다시 검색 호출, 여기서는 닫는 로직 유지
         setIsModalOpen(false);
-        // (선택) 깔끔하게 검색어와 결과도 초기화
         setKeyword("");
         setSearchResult([]);
       }
@@ -123,19 +121,19 @@ const FriendPage = () => {
               ) : (
                 searchResult.map(user => (
                   <div key={user.userIdx} className="friend-item modal-item">
-                     <div className="friend-avatar-wrapper small">
-                        <div className="friend-avatar" style={{backgroundImage: user.profileImage ? `url(${user.profileImage})` : 'none', backgroundColor: '#ddd'}}></div>
-                     </div>
-                     <div className="friend-details">
-                        <span className="friend-name">{user.nickname}</span>
-                        {user.mbti && <span className={`mbti-tag ${user.mbti.toLowerCase()}`}>{user.mbti}</span>}
-                     </div>
-                     <button 
+                      <div className="friend-avatar-wrapper small">
+                         <div className="friend-avatar" style={{backgroundImage: user.profileImage ? `url(${user.profileImage})` : 'none', backgroundColor: '#ddd'}}></div>
+                      </div>
+                      <div className="friend-details">
+                         <span className="friend-name">{user.nickname}</span>
+                         {user.mbti && <span className={`mbti-tag ${user.mbti.toLowerCase()}`}>{user.mbti}</span>}
+                      </div>
+                      <button 
                         className={`action-btn ${ (user.followBack || user.isFollowBack) ? 'unfollow' : 'follow' }`}
                         onClick={() => handleToggleFollow(user.userIdx)}
-                     >
+                      >
                         { (user.followBack || user.isFollowBack) ? "언팔로우" : "팔로우" }
-                     </button>
+                      </button>
                   </div>
                 ))
               )}
@@ -184,16 +182,18 @@ const FriendPage = () => {
               <div className="menu-item logout">📤 로그아웃</div>
             </nav>
             <div className="invite-banner">
-                 <div className="banner-content">
+                  <div className="banner-content">
                     <h4>친구 초대하기</h4>
                     <p>링크를 공유해서 친구를 초대해보세요!</p>
                     <button className="copy-link-btn">초대 링크 복사</button>
-                 </div>
+                  </div>
             </div>
           </aside>
 
           {/* 오른쪽 리스트 영역 */}
           <section className="friend-list-area">
+            
+            {/* ✅ Git 충돌 해결된 탭 영역 */}
             <div className="filter-tabs">
               <button 
                 className={`tab ${activeTab === 'following' ? 'active' : ''}`}
@@ -240,6 +240,7 @@ const FriendPage = () => {
 
                     <div className="friend-action">
                         {activeTab === 'following' ? (
+                            /* 내가 팔로우하는 탭: 무조건 언팔로우 버튼 */
                             <button 
                                 className="action-btn unfollow"
                                 onClick={() => handleToggleFollow(user.userIdx)}
@@ -247,8 +248,9 @@ const FriendPage = () => {
                                 언팔로우
                             </button>
                         ) : (
+                            /* 나를 팔로우하는 탭: 맞팔 여부에 따라 다름 */
                             <button 
-                                className={`action-btn ${user.isFollowBack ? 'unfollow' : 'follow'}`}
+                                className={`action-btn ${ (user.isFollowBack || user.followBack) ? 'unfollow' : 'follow' }`}
                                 onClick={() => handleToggleFollow(user.userIdx)}
                             >
                                 {(user.isFollowBack || user.followBack) ? "언팔로우" : "맞팔로우"}

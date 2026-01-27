@@ -5,16 +5,30 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { getCookie } from '../../js/getToken';
 import { write } from '../api/게시판테스트/writeService';
+import { SelectPlan } from '../api/plan/PlanService';
 
 
 const PostWrite = () => {
   const navigate = useNavigate();
   const editorRef = useRef(null); // 에디터 내용을 가져오기 위한 ref
-  const [title, setTitle] = useState(''); // 제목 상태 관리
- // 1. 썸네일 이미지를 담을 상태 (하나만 저장)
   const [thumbnail, setThumbnail] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false); // 팝업 열기/닫기
+  const [plannerList, setPlannerList] = useState([]);    // 서버에서 받은 리스트 저장
+  const [selectedPlanner, setSelectedPlanner] = useState(null); // 선택된 플래너 {idx, title}
 
-  // 2. 파일 선택 시 실행되는 함수
+  
+  function planner(){
+    const token = getCookie('token');
+    SelectPlan(token)
+      .then(res => {
+
+        setPlannerList(res.data); // 서버에서 온 [{idx:1, title:'...'}, ...] 저장
+        setIsModalOpen(true);
+      }).catch(err => {
+        console.log("error");
+      });
+  }
+  
   const handleFileChange = (e) => {
     const file = e.target.files[0]; // 무조건 첫 번째 파일만 선택
     if (file) {
@@ -37,12 +51,13 @@ const PostWrite = () => {
     const content = editorRef.current.getContent(); 
     const token = getCookie('token'); 
 
+
     // 서버로 보낼 데이터 객체 구성
     const obj = {
       title: title.value,      // 제목 상태값
       content: content,  // 에디터 HTML 내용
       thumbnail: thumbnail,
-      planidx: 1, 
+      planIdx: selectedPlanner ? selectedPlanner.idx : 0,
       token: token
     };
 
@@ -132,8 +147,8 @@ const PostWrite = () => {
                 <h4>여행 플래너 추가</h4>
               </div>
               <div className="load-planner-box">
-                <button className="btn-load-planner">
-                  <span>📅</span> 플래너 불러오기
+                <button className="btn-load-planner" onClick={planner}>
+                  <span>📅</span> {selectedPlanner ? selectedPlanner.title : "플래너 불러오기"}
                 </button>
               </div>
             </div>
@@ -188,6 +203,33 @@ const PostWrite = () => {
           <span>이용약관</span> <span>개인정보처리방침</span> <span>고객센터</span>
         </div>
       </footer>
+      {isModalOpen && (
+        <div className="planner-modal-overlay" onClick={() => setIsModalOpen(false)}>
+          <div className="planner-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>나의 여행 플래너 선택</h3>
+              <button className="close-x" onClick={() => setIsModalOpen(false)}>X</button>
+            </div>
+            <div className="modal-body">
+              <ul className="planner-select-list">
+                {plannerList && plannerList.length > 0 ? (
+                  plannerList.map((item) => (
+                    <li key={item.idx} onClick={() => { 
+                      setSelectedPlanner(item);// 선택한 플래너 정보 저장
+                      setIsModalOpen(false);    // 팝업 닫기
+                    }}>
+                      <span className="p-icon">📍</span>
+                      <span className="p-title">{item.title}</span>
+                    </li>
+                  ))
+                ) : (
+                  <p className="no-data">생성된 플래너가 없습니다.</p>
+                )}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

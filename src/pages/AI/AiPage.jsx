@@ -257,23 +257,7 @@ const AIPage = () => {
       )}
 
       {/* 헤더 */}
-      <header className="header">
-        <div className="header-inner">
-          <h1 className="logo">TripMate <small>AI Travel</small></h1>
-          <nav className="header-nav">
-            <span>홈</span>
-            <span className="active">AI 추천</span>
-            <span>여행지</span>
-            <span>커뮤니티</span>
-            <span>마이페이지</span>
-          </nav>
-          <div className="header-right">
-            <span>🌙</span>
-            <div className="profile-circle"></div>
-            <span className="user-name">김여행</span>
-          </div>
-        </div>
-      </header>
+      
 
       {/* 메인 컨테이너: 설정화면은 그대로, 결과화면만 1600px로 아주 넓게 */}
       <main className="ai-container wide-container" style={ isSettingsComplete ? { display: 'flex', flexDirection: 'column', alignItems: 'center', width: '95%', maxWidth: '1600px', margin: '0 auto', paddingBottom: '120px' } : {} }>

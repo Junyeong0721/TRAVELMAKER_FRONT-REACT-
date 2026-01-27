@@ -1,9 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './MyPage.css';
 import { useNavigate } from 'react-router-dom'; // ★ 페이지 이동 훅
+import { getCookie } from '../../js/getToken';
+import { MyInfo } from '../api/MyInfo/myinfoService';
 
 const MyPage = () => {
+  const [myInfo, setMyInfo] = useState([]);
   const navigate = useNavigate(); // 이동 함수 생성
+  const nickname = getCookie('userNickName');
+  const mbti = getCookie('userMbti');
+  useEffect(() => {
+    const token = getCookie('token');
+    MyInfo(token)
+      .then(res => {
+        console.log(res);
+        setMyInfo(res.data);
+      }).catch(err => {
+        console.log("error");
+      });
+    
+  }, []);
+
 
   return (
     <div className="mypage-wrapper">
@@ -23,22 +40,16 @@ const MyPage = () => {
           <aside className="mypage-sidebar">
             <div className="profile-summary-card">
               <div className="avatar-section">
-                <div className="avatar-circle"></div>
-                <button className="avatar-edit-btn">✏️</button>
               </div>
-              <h3>김여행</h3>
-              <p className="user-email">traveler@tripmate.com</p>
+              <h3>{nickname}</h3>
+              <p className="user-email">{myInfo.email}</p>
               <div className="user-badges">
-                <span className="badge-mbti">ENFP</span>
+                <span className="badge-mbti">{mbti}</span>
               </div>
               <div className="user-stats-row">
                 <div className="stat-box">
-                  <span className="stat-val">12</span>
+                  <span className="stat-val">{myInfo.postsCount}</span>
                   <span className="stat-label">나의 여행</span>
-                </div>
-                <div className="stat-box">
-                  <span className="stat-val">5</span>
-                  <span className="stat-label">리뷰</span>
                 </div>
               </div>
             </div>
@@ -89,11 +100,11 @@ const MyPage = () => {
               <div className="input-grid">
                 <div className="input-field">
                   <label>닉네임</label>
-                  <input type="text" defaultValue="김여행" />
+                  <input type="text" defaultValue={nickname} />
                 </div>
                 <div className="input-field">
                   <label>이메일</label>
-                  <input type="email" value="traveler@tripmate.com" readOnly className="readonly-input" />
+                  <input type="email" value={myInfo.email} readOnly className="readonly-input" />
                   <span className="helper-text">이메일 변경은 고객센터에 문의해주세요.</span>
                 </div>
               </div>

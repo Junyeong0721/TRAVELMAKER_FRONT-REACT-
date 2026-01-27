@@ -1,97 +1,446 @@
 :root {
-  --primary: #5D5FEF;
-  --bg: #F8F9FD;
-  --white: #ffffff;
-  --text-main: #333;
-  --text-sub: #666;
-  --roadmap-bg: #FFFFF4;
+    --primary: #5D5FEF;
+    --bg: #F8F9FD;
+    --white: #ffffff;
+    --text-main: #333;
+    --text-sub: #666;
+    --roadmap-bg: #FFFFF4;
 }
 
 .detail-page {
-  background-color: var(--bg);
-  min-height: 100vh;
-  padding: 40px 0;
-  font-family: 'Pretendard', sans-serif;
+    background-color: var(--bg);
+    min-height: 100vh;
+    padding: 40px 0;
+    font-family: 'Pretendard', sans-serif;
 }
 
 .detail-content-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  gap: 30px;
-  padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 30px;
+    padding: 0 20px;
 }
 
-.post-main { flex: 1; background: white; border-radius: 30px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-.back-btn { color: #999; font-size: 0.9rem; margin-bottom: 30px; cursor: pointer; }
+.owner-btns {
+    display: flex;
+    /* 가로로 배치 */
+    gap: 10px;
+    /* 버튼 사이 간격 */
+    justify-content: flex-end;
+    /* ✅ 요소를 오른쪽 끝으로 정렬 */
+    width: 100%;
+    /* 부모 너비를 다 써야 오른쪽 끝으로 갈 수 있습니다 */
+    margin-top: 20px;
+    /* 위쪽 본문과의 간격 */
+}
+
+.edit-btn {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    /* 오른쪽 정렬 */
+    margin-top: 20px;
+}
+
+.edit-btn button {
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease-in-out;
+}
+
+
+/* 수정 버튼 스타일 */
+
+.btn-edit {
+    background-color: #f0f7ff;
+    color: #007bff;
+}
+
+.btn-edit:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+
+/* 삭제 버튼 스타일 */
+
+.btn-delete {
+    background-color: #fff5f5;
+    color: #ff4d4f;
+}
+
+.btn-delete:hover {
+    background-color: #ff4d4f;
+    color: white;
+}
+
+.post-main {
+    flex: 1;
+    background: white;
+    border-radius: 30px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.back-btn {
+    color: #999;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+    cursor: pointer;
+}
+
 
 /* 게시글 헤더 */
-.detail-title { font-size: 2.2rem; font-weight: 800; line-height: 1.3; margin-bottom: 30px; }
-.author-info-row { display: flex; gap: 15px; align-items: center; margin-bottom: 40px; }
-.author-profile-img { width: 50px; height: 50px; background: #eee; border-radius: 50%; }
-.name-mbti { font-weight: bold; font-size: 1.1rem; }
-.mbti-badge { color: var(--primary); font-size: 0.8rem; background: #f0f1ff; padding: 2px 8px; border-radius: 5px; margin-left: 5px; }
-.post-meta { color: #999; font-size: 0.85rem; margin-top: 4px; }
+
+.detail-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 30px;
+}
+
+.author-info-row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.author-profile-img {
+    width: 50px;
+    height: 50px;
+    background: #eee;
+    border-radius: 50%;
+}
+
+.name-mbti {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.mbti-badge {
+    color: var(--primary);
+    font-size: 0.8rem;
+    background: #f0f1ff;
+    padding: 2px 8px;
+    border-radius: 5px;
+    margin-left: 5px;
+}
+
+.post-meta {
+    color: #999;
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
 
 /* 본문 아티클 */
-.article-main-img, .article-sub-img { width: 100%; border-radius: 20px; margin: 30px 0; }
-.post-article p { font-size: 1.1rem; line-height: 1.8; color: #444; margin-bottom: 30px; }
-.post-article h3 { font-size: 1.4rem; margin: 50px 0 20px; }
+
+.article-main-img,
+.article-sub-img {
+    width: 100%;
+    border-radius: 20px;
+    margin: 30px 0;
+}
+
+.post-article p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 30px;
+}
+
+.post-article h3 {
+    font-size: 1.4rem;
+    margin: 50px 0 20px;
+}
+
 
 /* AI 로드맵 디자인 */
+
 .roadmap-container {
-  background-color: var(--roadmap-bg);
-  border-radius: 25px;
-  padding: 35px;
-  margin: 40px 0;
-  border: 1px solid #f0f0d0;
+    background-color: var(--roadmap-bg);
+    border-radius: 25px;
+    padding: 35px;
+    margin: 40px 0;
+    border: 1px solid #f0f0d0;
 }
-.roadmap-header { display: flex; gap: 15px; margin-bottom: 30px; }
-.sparkle-icon { font-size: 1.5rem; }
-.roadmap-title h4 { font-size: 1.1rem; margin-bottom: 5px; }
-.roadmap-title p { font-size: 0.85rem; color: #888; margin: 0; }
 
-.timeline { position: relative; padding-left: 20px; }
-.timeline::before { content: ''; position: absolute; left: 5px; top: 10px; bottom: 10px; width: 2px; background: #eee; }
+.roadmap-header {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
 
-.timeline-item { position: relative; margin-bottom: 30px; }
-.time-dot { position: absolute; left: -20px; top: 8px; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; border: 3px solid #fff; }
-.timeline-content { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-.item-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-.item-time-place { font-weight: bold; font-size: 0.95rem; }
-.item-label { font-size: 0.75rem; color: #10b981; background: #ecfdf5; padding: 2px 8px; border-radius: 20px; font-weight: bold; }
-.item-desc { font-size: 0.9rem; color: #666; margin-bottom: 12px !important; }
-.item-tags span { font-size: 0.75rem; color: var(--primary); margin-right: 8px; }
+.sparkle-icon {
+    font-size: 1.5rem;
+}
+
+.roadmap-title h4 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.roadmap-title p {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 20px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    background: #eee;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.time-dot {
+    position: absolute;
+    left: -20px;
+    top: 8px;
+    width: 12px;
+    height: 12px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: 3px solid #fff;
+}
+
+.timeline-content {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.item-time-place {
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.item-label {
+    font-size: 0.75rem;
+    color: #10b981;
+    background: #ecfdf5;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.item-desc {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 12px !important;
+}
+
+.item-tags span {
+    font-size: 0.75rem;
+    color: var(--primary);
+    margin-right: 8px;
+}
+
 
 /* 댓글 영역 */
-.comment-section { border-top: 1px solid #eee; margin-top: 60px; padding-top: 40px; }
-.comment-card { display: flex; gap: 15px; margin-bottom: 30px; }
-.comment-user-img { width: 40px; height: 40px; background: #eee; border-radius: 50%; flex-shrink: 0; }
-.comment-user-info { display: flex; align-items: center; gap: 10px; }
-.c-name { font-weight: bold; font-size: 0.95rem; }
-.c-mbti { color: var(--primary); font-size: 0.75rem; }
-.c-time { color: #ccc; font-size: 0.8rem; }
-.c-text { margin: 8px 0 !important; font-size: 0.95rem; color: #444; }
-.c-actions { font-size: 0.8rem; color: #aaa; cursor: pointer; }
 
-.comment-input-area { display: flex; gap: 15px; margin-top: 40px; }
-.input-box { flex: 1; position: relative; }
-.input-box textarea { width: 100%; height: 80px; border: 1px solid #eee; border-radius: 15px; padding: 15px; background: #f9f9f9; resize: none; outline: none; }
-.submit-comment { position: absolute; right: 15px; bottom: 15px; background: var(--primary); color: white; border: none; padding: 6px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.comment-section {
+    border-top: 1px solid #eee;
+    margin-top: 60px;
+    padding-top: 40px;
+}
+
+.comment-card {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.comment-user-img {
+    width: 40px;
+    height: 40px;
+    background: #eee;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.comment-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.c-name {
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.c-mbti {
+    color: var(--primary);
+    font-size: 0.75rem;
+}
+
+.c-time {
+    color: #ccc;
+    font-size: 0.8rem;
+}
+
+.c-text {
+    margin: 8px 0 !important;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.c-actions {
+    font-size: 0.8rem;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.comment-input-area {
+    display: flex;
+    gap: 15px;
+    margin-top: 40px;
+}
+
+.input-box {
+    flex: 1;
+    position: relative;
+}
+
+.input-box textarea {
+    width: 100%;
+    height: 80px;
+    border: 1px solid #eee;
+    border-radius: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    resize: none;
+    outline: none;
+}
+
+.submit-comment {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 
 /* 사이드바 */
-.post-sidebar { width: 320px; display: flex; flex-direction: column; gap: 20px; }
-.sidebar-stats, .about-author-card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
 
-.stat-item { font-size: 0.95rem; margin-bottom: 15px; color: #555; }
-.copy-planner-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-.btn-sub-text { font-size: 0.7rem; color: #aaa; text-align: center; margin-top: 10px; }
+.post-sidebar {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
-.about-author-card { background: #FFFFF4; } /* 작가 카드는 약간 노란 빛 */
-.about-label { font-size: 0.75rem; color: #aaa; font-weight: bold; margin-bottom: 15px; }
-.author-card-content { display: flex; gap: 12px; align-items: center; margin-bottom: 15px; }
-.author-avatar-large { width: 45px; height: 45px; background: #ddd; border-radius: 50%; }
-.author-card-info h4 { margin: 0; font-size: 1rem; }
-.author-card-info p { margin: 0; font-size: 0.8rem; color: #888; }
-.author-intro { font-size: 0.85rem; color: #666; line-height: 1.5; margin-bottom: 20px; }
-.follow-btn { width: 100%; padding: 10px; background: white; border: 1px solid #eee; border-radius: 20px; font-size: 0.85rem; cursor: pointer; }
+.sidebar-stats,
+.about-author-card {
+    background: white;
+    padding: 25px;
+    border-radius: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.stat-item {
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+.copy-planner-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-sub-text {
+    font-size: 0.7rem;
+    color: #aaa;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.about-author-card {
+    background: #FFFFF4;
+}
+
+
+/* 작가 카드는 약간 노란 빛 */
+
+.about-label {
+    font-size: 0.75rem;
+    color: #aaa;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.author-card-content {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.author-card-info h4 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.author-card-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.author-intro {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.follow-btn {
+    width: 100%;
+    padding: 10px;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}

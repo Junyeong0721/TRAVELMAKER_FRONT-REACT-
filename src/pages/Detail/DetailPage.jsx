@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios'; // API 호출 필수
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './DetailPage.css';
 import { boardDetail } from '../api/게시판상세보기/detailService';
 import { comment } from '../api/comment/commentService';
 import { getCookie } from '../../js/getToken';
 
-const CommunityDetail = () => {
+const DetailPage = () => {
   const { idx } = useParams();
-  const [detail, setDetail] = useState(null);
+  const navigate = useNavigate(); // 페이지 이동용 훅 추가
   
+  const [detail, setDetail] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   // 팔로우 상태 관리 (false: 안함, true: 함)
   const [isFollowing, setIsFollowing] = useState(false);
+  // 내 글인지 여부 (false: 남의 글, true: 내 글)
+  const [isMine, setIsMine] = useState(false);
 
   useEffect(() => {
     boardDetail(idx)
@@ -19,19 +24,35 @@ const CommunityDetail = () => {
         if (res.status === 200) {
           console.log("게시글 상세 데이터:", res.data);
           setDetail(res.data);
-          
-          // ✅ [핵심 수정] 서버에서 "이미 팔로우함(true)" 이라고 하면 버튼 상태 켜기
-          // 백엔드 DTO 구조상 post 안에 isFollowed가 들어있을 확률이 높습니다.
-          if (res.data.post && res.data.post.followed) {
-                 setIsFollowing(true);
-}
+
+          // 1. 서버에서 "이미 팔로우함(true)" 이라고 하면 버튼 상태 켜기
+          // (백엔드 DTO에 isFollowed 필드가 있다고 가정)
+          if (res.data.post && res.data.post.isFollowed) {
+            setIsFollowing(true);
+          }
+
+          // 2. 내 글인지 확인 (백엔드에서 isMine: true를 줘야 함, 혹은 토큰과 비교 로직 필요)
+          // 여기서는 백엔드에서 isMine을 준다고 가정합니다.
+          if (res.data.post && res.data.post.isMine) {
+            setIsMine(true);
+          }
         }
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error(err);
+        alert("게시글을 불러오는 데 실패했습니다.");
+      })
+      .finally(() => {
+        setLoading(false); // 로딩 완료
+      });
   }, [idx]);
 
-  if (!detail) {
+  if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (!detail) {
+    return <div>게시글 정보를 찾을 수 없습니다.</div>;
   }
 
   const { post, roadmap, comments } = detail;
@@ -46,9 +67,9 @@ const CommunityDetail = () => {
       return;
     }
 
-    // 2. 팔로우 대상 ID 가져오기
-    const targetUserIdx = post.userIdx || post.writerIdx || post.idx; 
-    console.log("팔로우 대상 유저 ID:", targetUserIdx);
+    // 2. 팔로우 대상 ID 가져오기 (작성자 ID)
+    // DTO 필드명에 따라 userIdx, writerIdx 등을 확인하세요.
+    const targetUserIdx = post.userIdx || post.writerIdx;
 
     if (!targetUserIdx) {
       alert("작성자 정보를 찾을 수 없습니다.");
@@ -56,7 +77,8 @@ const CommunityDetail = () => {
     }
 
     try {
-      // 3. API 호출 (절대 주소 사용)
+      // 3. API 호출 (팔로우 토글)
+      // 주소는 백엔드 설정에 맞게 수정 (예: /api/follow/...)
       await axios.post(`http://localhost:8085/api/follow/${targetUserIdx}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -65,7 +87,7 @@ const CommunityDetail = () => {
 
       // 4. 성공 시 버튼 상태 반전 (켜기 <-> 끄기)
       setIsFollowing(!isFollowing);
-      
+
     } catch (error) {
       console.error("팔로우 실패:", error);
       if (error.response && error.response.status === 404) {
@@ -80,6 +102,11 @@ const CommunityDetail = () => {
   function inputcomment() {
     const content = document.getElementById("content");
     const token = getCookie('token');
+
+    if (!token) {
+      alert("로그인 후 이용해주세요.");
+      return;
+    }
     if (!content.value.trim()) {
       alert("내용을 입력해주세요.");
       return;
@@ -95,9 +122,13 @@ const CommunityDetail = () => {
       .then(res => {
         if (res.status === 200) {
           console.log("댓글 등록 성공:", res.data);
-          window.location.reload();
+          window.location.reload(); // 새로고침해서 댓글 반영
         }
       })
+      .catch(err => {
+        console.error("댓글 등록 실패", err);
+        alert("댓글 등록 중 오류가 발생했습니다.");
+      });
   }
 
   return (
@@ -111,8 +142,12 @@ const CommunityDetail = () => {
             <h1 className="detail-title">{post.title}</h1>
             <div className="author-info-row">
               <div className="author-profile-img">
-                 {/* 프로필 이미지 안전 처리 */}
-                 {post.profileImg && <img src={post.profileImg} alt="프로필" style={{width:'100%', height:'100%', borderRadius:'50%'}} />}
+                {/* 프로필 이미지 */}
+                {post.profileImg ? (
+                  <img src={post.profileImg} alt="프로필" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', backgroundColor: '#ddd' }}></div>
+                )}
               </div>
               <div className="author-text">
                 <div className="name-mbti">{post.nickname} <span className="mbti-badge">{post.mbti}</span></div>
@@ -122,6 +157,7 @@ const CommunityDetail = () => {
           </header>
 
           <article className="post-article">
+            {/* 본문 내용 (HTML 렌더링) */}
             <div
               className="post-content-html"
               dangerouslySetInnerHTML={{ __html: post.content }}
@@ -138,30 +174,34 @@ const CommunityDetail = () => {
                 </div>
               </div>
               <div className="timeline">
-                {roadmap && roadmap.map((item, index) => (
-                  <div key={index} className="timeline-item">
-                    <div className="time-dot"></div>
-                    <div className="timeline-content">
-                      <div className="item-header">
-                        <span className="item-time-place">{item.visitTime} - {item.planTitle}</span>
-                        <span className="item-label">{item.types}</span>
-                      </div>
-                      <p className="item-desc">{item.memo}</p>
-                      <div className="item-tags">
-                        <span>#{item.address}</span>
+                {roadmap && roadmap.length > 0 ? (
+                  roadmap.map((item, index) => (
+                    <div key={index} className="timeline-item">
+                      <div className="time-dot"></div>
+                      <div className="timeline-content">
+                        <div className="item-header">
+                          <span className="item-time-place">{item.visitTime} - {item.planTitle}</span>
+                          <span className="item-label">{item.types}</span>
+                        </div>
+                        <p className="item-desc">{item.memo}</p>
+                        <div className="item-tags">
+                          <span>#{item.address}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p style={{ padding: '20px', color: '#999', textAlign: 'center' }}>로드맵 정보가 없습니다.</p>
+                )}
               </div>
             </div>
           </article>
 
           {/* 댓글 섹션 */}
           <section className="comment-section">
-            <h3>댓글 {comments.length}개</h3>
+            <h3>댓글 {comments ? comments.length : 0}개</h3>
             <div className="comment-list">
-              {comments.map(c => (
+              {comments && comments.map(c => (
                 <div key={c.idx} className="comment-card">
                   <div className="comment-user-img"></div>
                   <div className="comment-body">
@@ -184,7 +224,6 @@ const CommunityDetail = () => {
           </section>
         </main>
 
-        {/* 오른쪽 사이드바 영역 */}
         <aside className="post-sidebar">
           <div className="sidebar-stats">
             <div className="stat-item"><span>❤️</span> 좋아요 <strong>{post.likeCount}</strong></div>
@@ -195,30 +234,40 @@ const CommunityDetail = () => {
             <p className="about-label">ABOUT AUTHOR</p>
             <div className="author-card-content">
               <div className="author-avatar-large">
-                {post.profileImg && <img src={post.profileImg} alt="작가 프로필" style={{width:'100%', height:'100%', borderRadius:'50%'}} />}
+                {post.profileImg ? (
+                  <img src={post.profileImg} alt="작가 프로필" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', backgroundColor: '#eee' }}></div>
+                )}
               </div>
               <div className="author-card-info">
                 <h4>{post.nickname}</h4>
-                <p>{post.userGrade}</p>
+                <p>{post.userGrade || "여행자"}</p>
               </div>
             </div>
             <p className="author-intro">{post.userIntro || "소개글이 없습니다."}</p>
-            
-            {/* 팔로우 버튼 */}
-            <button 
-                className="follow-btn" 
+
+            {/* ✅ 팔로우 버튼 (내 글 아닐 때만 보임) */}
+            {!isMine && (
+              <button
+                className="follow-btn"
                 onClick={handleFollow}
                 style={{
-                    backgroundColor: isFollowing ? '#e0e0e0' : '#6c5ce7',
-                    color: isFollowing ? '#333' : '#fff',
-                    border: isFollowing ? '1px solid #ccc' : 'none',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    transition: 'all 0.3s ease'
+                  backgroundColor: isFollowing ? '#e0e0e0' : '#6c5ce7', // 팔로우중(회색) / 미팔로우(보라색)
+                  color: isFollowing ? '#555' : '#fff',
+                  border: isFollowing ? '1px solid #ccc' : 'none',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s ease',
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '8px',
+                  marginTop: '15px'
                 }}
-            >
+              >
                 {isFollowing ? "팔로우 취소" : "팔로우 하기"}
-            </button>
+              </button>
+            )}
           </div>
         </aside>
       </div>
@@ -226,4 +275,4 @@ const CommunityDetail = () => {
   );
 };
 
-export default CommunityDetail;
+export default DetailPage;
