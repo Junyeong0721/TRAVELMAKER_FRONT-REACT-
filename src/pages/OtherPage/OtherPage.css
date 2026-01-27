@@ -1,0 +1,153 @@
+:root {
+  --primary: #5D5FEF;
+  --bg: #ffffff;
+  --text-main: #333;
+  --text-sub: #888;
+  --border-color: #eee;
+}
+
+.other-page-wrapper {
+  background-color: var(--bg);
+  min-height: 100vh;
+  padding: 60px 0;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.other-page-container {
+  max-width: 935px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* --- 프로필 헤더 --- */
+.profile-header {
+  margin-bottom: 44px;
+  /* 이미지가 없어졌으므로 중앙 정렬을 원하시면 아래 주석을 해제하세요 */
+  /* display: flex; justify-content: center; */
+}
+
+.profile-main-info {
+  /* 기존 flex 레이아웃 제거 */
+  /* display: flex; align-items: center; gap: 80px; */
+}
+
+/* 프로필 이미지 스타일 삭제됨 (.profile-image-wrapper, .profile-image-inner) */
+
+.profile-details {
+  flex: 1;
+  /* 텍스트 중앙 정렬을 원하시면 아래 주석을 해제하세요 */
+  /* text-align: center; */
+}
+
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  /* 텍스트 중앙 정렬 시 아래 주석 해제 */
+  /* justify-content: center; */
+}
+
+.user-id {
+  font-size: 1.6rem;
+  font-weight: 300;
+}
+
+/* --- 친구 추가 버튼 (최소화 버전) --- */
+.follow-btn {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  /* 가로 패딩을 14px에서 8px로 줄임 */
+  padding: 6px 8px; 
+  border-radius: 6px;
+  /* 글자 크기도 살짝 더 줄임 */
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  /* 버튼 내용물에 딱 맞게 너비 설정 */
+  width: auto; 
+  min-width: fit-content;
+}
+
+.follow-btn:hover {
+  background-color: #4a4cd9;
+}
+
+.stats-row {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 15px;
+  /* 텍스트 중앙 정렬 시 아래 주석 해제 */
+  /* justify-content: center; */
+}
+
+.stats-row span { font-size: 0.95rem; }
+.stats-row strong { font-weight: 700; }
+
+.mbti-info .mbti-label {
+  background-color: #f0f1ff;
+  color: var(--primary);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* --- 이하 탭 메뉴 및 그리드 (기존 동일) --- */
+.profile-tabs {
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-bottom: 20px;
+  margin-top: 40px; /* 상단 여백 추가 */
+}
+
+.tab-item {
+  padding: 15px 0;
+  font-size: 0.8rem;
+  color: var(--text-sub);
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+.tab-item.active {
+  color: var(--text-main);
+  font-weight: 700;
+  border-top: 1px solid #333;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+}
+
+.post-item-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.post-item-card:hover { transform: translateY(-5px); }
+
+.post-thumb-box {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background-color: #f5f5f5;
+}
+
+.post-thumb-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-text-content { padding: 15px; }
+.post-item-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+.post-item-date { font-size: 0.8rem; color: #ccc; }

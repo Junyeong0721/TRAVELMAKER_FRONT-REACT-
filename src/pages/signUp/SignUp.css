@@ -1,15 +1,26 @@
-/* 기본 설정 */
+/* --- 기본 초기화 및 변수 설정 --- */
+:root {
+  --primary: #4f63ff;
+  --secondary: #6a47ff;
+  --bg-gradient: linear-gradient(135deg, #4f63ff 0%, #6a47ff 100%);
+  --ticket-cream: #fffde7;
+  --text-main: #222;
+  --text-sub: #555;
+  --border-color: #e0e0e0;
+  --shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Pretendard', sans-serif;
+  font-family: 'Pretendard', -apple-system, sans-serif;
 }
 
+/* --- 배경 및 컨테이너 --- */
 .signup-page {
   width: 100vw;
   height: 100vh;
-  /* 로그인과 동일한 바다 배경 사진 */
   background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop');
   background-size: cover;
   background-position: center;
@@ -20,18 +31,17 @@
 
 .ticket-container {
   display: flex;
-  width: 950px; /* 입력창 확보를 위해 가로를 조금 더 넓힘 */
-  /* 4개 입력 필드를 위해 최소 높이를 650px로 설정 */
-  min-height: 650px;
-  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.25));
+  width: 950px;
+  min-height: 700px; /* 입력 필드 추가에 따른 높이 확보 */
+  filter: drop-shadow(var(--shadow));
   border-radius: 24px;
   overflow: hidden;
 }
 
-/* 왼쪽 섹션 (파란색) */
+/* --- 왼쪽 섹션: 티켓 정보 (Blue) --- */
 .ticket-info {
   flex: 1;
-  background: linear-gradient(135deg, #4f63ff 0%, #6a47ff 100%);
+  background: var(--bg-gradient);
   padding: 50px 40px;
   color: white;
   display: flex;
@@ -68,51 +78,80 @@
 
 .style-find-text { font-size: 0.85rem; margin-top: 30px; opacity: 0.8; }
 
-/* 오른쪽 섹션 (크림색) */
+/* --- 오른쪽 섹션: 회원가입 폼 (Cream) --- */
 .ticket-form {
   flex: 1.8;
-  background-color: #fffde7; 
-  padding: 50px 60px;
+  background-color: var(--ticket-cream);
+  padding: 40px 60px;
   position: relative;
   display: flex;
   flex-direction: column;
 }
 
-.form-title { font-size: 2.2rem; margin-bottom: 35px; color: #222; }
+.form-title { font-size: 2.2rem; margin-bottom: 25px; color: var(--text-main); }
 
-.input-group { margin-bottom: 18px; } /* 간격을 조금 촘촘하게 조정 */
-.input-group label { display: block; font-size: 0.85rem; color: #555; margin-bottom: 8px; font-weight: 600; }
-.input-group input {
-  width: 100%;
-  padding: 14px;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  font-size: 0.95rem;
+.input-group { margin-bottom: 15px; }
+.input-group label { 
+  display: block; 
+  font-size: 0.85rem; 
+  color: var(--text-sub); 
+  margin-bottom: 6px; 
+  font-weight: 600; 
 }
 
+/* --- 입력창 및 콤보박스 공통 스타일 --- */
+.input-group input, 
+.input-group select {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  background-color: white;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+/* 콤보박스(select) 전용 커스텀 스타일 */
+.input-group select {
+  cursor: pointer;
+  appearance: none; /* 브라우저 기본 화살표 제거 */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23555' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 15px) center;
+  padding-right: 40px;
+}
+
+.input-group input:focus, 
+.input-group select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(79, 99, 255, 0.1);
+  background-color: white;
+}
+
+/* --- 버튼 및 링크 --- */
 .signup-submit-btn {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(to right, #4f63ff, #6a47ff);
+  background: var(--bg-gradient);
   color: white;
   border: none;
   border-radius: 14px;
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 10px;
-  transition: 0.2s;
+  margin-top: 15px;
+  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .signup-submit-btn:hover {
-  box-shadow: 0 10px 20px rgba(79, 99, 255, 0.2);
-  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(79, 99, 255, 0.3);
+  transform: translateY(-3px);
 }
 
-/* 하단 로그인 링크 정렬 */
 .login-prompt {
-  margin-top: auto; /* 박스 안쪽 하단에 고정 */
-  padding-top: 25px;
+  margin-top: auto;
+  padding-top: 20px;
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -121,11 +160,14 @@
 }
 
 .login-link {
-  color: #4f63ff;
+  color: var(--primary);
   font-weight: 700;
   text-decoration: none;
 }
 
+.login-link:hover { text-decoration: underline; }
+
+/* --- 장식용 요소 --- */
 .corner-tag {
   position: absolute;
   top: 25px;
@@ -134,4 +176,5 @@
   height: 25px;
   background-color: #ffd54f;
   transform: rotate(45deg);
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
 }
