@@ -8,14 +8,14 @@ import { getCookie } from '../../js/getToken';
 
 const DetailPage = () => {
   const { idx } = useParams();
-  const navigate = useNavigate(); // 페이지 이동용 훅 추가
+  const navigate = useNavigate();
   
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 팔로우 상태 관리 (false: 안함, true: 함)
+  // 팔로우 상태 관리
   const [isFollowing, setIsFollowing] = useState(false);
-  // 내 글인지 여부 (false: 남의 글, true: 내 글)
+  // 내 글인지 여부
   const [isMine, setIsMine] = useState(false);
 
   useEffect(() => {
@@ -25,16 +25,15 @@ const DetailPage = () => {
           console.log("게시글 상세 데이터:", res.data);
           setDetail(res.data);
 
-          // 1. 서버에서 "이미 팔로우함(true)" 이라고 하면 버튼 상태 켜기
-          // (백엔드 DTO에 isFollowed 필드가 있다고 가정)
-          if (res.data.post && res.data.post.isFollowed) {
-            setIsFollowing(true);
+          // ✅ [수정 1] 데이터 구조에 맞게 수정 (post.isMine -> mine)
+          // 로그에 따르면 mine은 root에 있습니다.
+          if (res.data.mine) {
+            setIsMine(true);
           }
 
-          // 2. 내 글인지 확인 (백엔드에서 isMine: true를 줘야 함, 혹은 토큰과 비교 로직 필요)
-          // 여기서는 백엔드에서 isMine을 준다고 가정합니다.
-          if (res.data.post && res.data.post.isMine) {
-            setIsMine(true);
+          // 2. 팔로우 상태 확인 (post 안에 있는지 확인 필요)
+          if (res.data.post && res.data.post.isFollowed) {
+            setIsFollowing(true);
           }
         }
       })
@@ -43,106 +42,77 @@ const DetailPage = () => {
         alert("게시글을 불러오는 데 실패했습니다.");
       })
       .finally(() => {
-        setLoading(false); // 로딩 완료
+        setLoading(false);
       });
   }, [idx]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!detail) {
-    return <div>게시글 정보를 찾을 수 없습니다.</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (!detail) return <div>게시글 정보를 찾을 수 없습니다.</div>;
 
   const { post, roadmap, comments } = detail;
 
-  // 팔로우 버튼 클릭 핸들러
+  // ✅ [이동] 작성자 프로필 클릭
+  const handleProfileClick = () => {
+    const targetUserIdx = post.userIdx || post.writerIdx;
+    if (targetUserIdx) navigate(`/other/${targetUserIdx}`);
+  };
+
+  // ✅ [이동] 댓글 유저 프로필 클릭
+  const handleCommentUserClick = (commentUserIdx) => {
+    if (commentUserIdx) navigate(`/other/${commentUserIdx}`);
+    else alert("유저 정보를 찾을 수 없습니다.");
+  };
+
+  // 팔로우 핸들러
   const handleFollow = async () => {
     const token = getCookie('token');
+    if (!token) return alert("로그인이 필요한 서비스입니다.");
 
-    // 1. 로그인 체크
-    if (!token) {
-      alert("로그인이 필요한 서비스입니다.");
-      return;
-    }
-
-    // 2. 팔로우 대상 ID 가져오기 (작성자 ID)
-    // DTO 필드명에 따라 userIdx, writerIdx 등을 확인하세요.
     const targetUserIdx = post.userIdx || post.writerIdx;
-
-    if (!targetUserIdx) {
-      alert("작성자 정보를 찾을 수 없습니다.");
-      return;
-    }
+    if (!targetUserIdx) return alert("작성자 정보를 찾을 수 없습니다.");
 
     try {
-      // 3. API 호출 (팔로우 토글)
-      // 주소는 백엔드 설정에 맞게 수정 (예: /api/follow/...)
       await axios.post(`http://localhost:8085/api/follow/${targetUserIdx}`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
-
-      // 4. 성공 시 버튼 상태 반전 (켜기 <-> 끄기)
       setIsFollowing(!isFollowing);
-
     } catch (error) {
       console.error("팔로우 실패:", error);
-      if (error.response && error.response.status === 404) {
-        alert("서버 연결 실패: 주소를 찾을 수 없습니다. (404)");
-      } else {
-        alert("팔로우 처리에 실패했습니다.");
-      }
+      alert("팔로우 처리에 실패했습니다.");
     }
   };
 
-  // 댓글 등록 함수
+  // 댓글 등록
   function inputcomment() {
     const content = document.getElementById("content");
     const token = getCookie('token');
+    if (!token) return alert("로그인 후 이용해주세요.");
+    if (!content.value.trim()) return alert("내용을 입력해주세요.");
 
-    if (!token) {
-      alert("로그인 후 이용해주세요.");
-      return;
-    }
-    if (!content.value.trim()) {
-      alert("내용을 입력해주세요.");
-      return;
-    }
-
-    const obj = {
-      content: content.value,
-      token: token,
-      postIdx: idx
-    }
-
-    comment(obj)
+    comment({ content: content.value, token: token, postIdx: idx })
       .then(res => {
-        if (res.status === 200) {
-          console.log("댓글 등록 성공:", res.data);
-          window.location.reload(); // 새로고침해서 댓글 반영
-        }
+        if (res.status === 200) window.location.reload();
       })
-      .catch(err => {
-        console.error("댓글 등록 실패", err);
-        alert("댓글 등록 중 오류가 발생했습니다.");
-      });
+      .catch(err => alert("댓글 등록 중 오류가 발생했습니다."));
   }
 
   return (
     <div className="detail-page">
       <div className="detail-content-wrapper">
         <main className="post-main">
-          {/* 목록으로 돌아가기 */}
           <div className="back-btn" onClick={() => window.history.back()}>← 커뮤니티 목록으로 돌아가기</div>
 
           <header className="detail-header">
             <h1 className="detail-title">{post.title}</h1>
-            <div className="author-info-row">
+            
+            <div 
+              className="author-info-row" 
+              onClick={handleProfileClick} 
+              style={{ cursor: 'pointer' }}
+              title="작가 프로필 방문하기"
+            >
               <div className="author-profile-img">
-                {/* 프로필 이미지 */}
+                {/* ✅ [수정 2] src가 빈 문자열("")일 때 경고 방지: || null 추가 */}
                 {post.profileImg ? (
                   <img src={post.profileImg} alt="프로필" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
                 ) : (
@@ -157,14 +127,9 @@ const DetailPage = () => {
           </header>
 
           <article className="post-article">
-            {/* 본문 내용 (HTML 렌더링) */}
-            <div
-              className="post-content-html"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            <div className="post-content-html" dangerouslySetInnerHTML={{ __html: post.content }} />
 
             <h3>AI가 추천한 오늘의 루트</h3>
-
             <div className="roadmap-container">
               <div className="roadmap-header">
                 <span className="sparkle-icon">✨</span>
@@ -184,9 +149,7 @@ const DetailPage = () => {
                           <span className="item-label">{item.types}</span>
                         </div>
                         <p className="item-desc">{item.memo}</p>
-                        <div className="item-tags">
-                          <span>#{item.address}</span>
-                        </div>
+                        <div className="item-tags"><span>#{item.address}</span></div>
                       </div>
                     </div>
                   ))
@@ -203,10 +166,31 @@ const DetailPage = () => {
             <div className="comment-list">
               {comments && comments.map(c => (
                 <div key={c.idx} className="comment-card">
-                  <div className="comment-user-img"></div>
+                  
+                  {/* 댓글 작성자 프사 클릭 */}
+                  <div 
+                    className="comment-user-img"
+                    onClick={() => handleCommentUserClick(c.userIdx)}
+                    style={{ 
+                        cursor: 'pointer',
+                        // ✅ [수정 3] 배경 이미지도 값이 없으면 none 처리
+                        backgroundImage: c.profileImg ? `url(${c.profileImg})` : 'none',
+                        backgroundColor: c.profileImg ? 'transparent' : '#ddd',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }}
+                  ></div>
+
                   <div className="comment-body">
                     <div className="comment-user-info">
-                      <span className="c-name">{c.nickname} <span className="c-mbti">{c.mbti}</span></span>
+                      {/* 댓글 작성자 닉네임 클릭 */}
+                      <span 
+                        className="c-name" 
+                        onClick={() => handleCommentUserClick(c.userIdx)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {c.nickname} <span className="c-mbti">{c.mbti}</span>
+                      </span>
                       <span className="c-time">{c.createAt}</span>
                     </div>
                     <p className="c-text">{c.content}</p>
@@ -214,6 +198,7 @@ const DetailPage = () => {
                 </div>
               ))}
             </div>
+            
             <div className="comment-input-area">
               <div className="comment-user-img"></div>
               <div className="input-box">
@@ -226,7 +211,8 @@ const DetailPage = () => {
 
         <aside className="post-sidebar">
           <div className="sidebar-stats">
-            <div className="stat-item"><span>❤️</span> 좋아요 <strong>{post.likeCount}</strong></div>
+            {/* 좋아요 정보가 post가 아니라 detail 루트(checkedLike)에 있을 수도 있음 */}
+            <div className="stat-item"><span>❤️</span> 좋아요 <strong>{post.likeCount || 0}</strong></div>
             <div className="stat-item"><span>🔗</span> 공유하기</div>
           </div>
 
@@ -234,6 +220,7 @@ const DetailPage = () => {
             <p className="about-label">ABOUT AUTHOR</p>
             <div className="author-card-content">
               <div className="author-avatar-large">
+                {/* ✅ [수정 4] src 경고 방지 */}
                 {post.profileImg ? (
                   <img src={post.profileImg} alt="작가 프로필" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
                 ) : (
@@ -247,13 +234,12 @@ const DetailPage = () => {
             </div>
             <p className="author-intro">{post.userIntro || "소개글이 없습니다."}</p>
 
-            {/* ✅ 팔로우 버튼 (내 글 아닐 때만 보임) */}
             {!isMine && (
               <button
                 className="follow-btn"
                 onClick={handleFollow}
                 style={{
-                  backgroundColor: isFollowing ? '#e0e0e0' : '#6c5ce7', // 팔로우중(회색) / 미팔로우(보라색)
+                  backgroundColor: isFollowing ? '#e0e0e0' : '#6c5ce7',
                   color: isFollowing ? '#555' : '#fff',
                   border: isFollowing ? '1px solid #ccc' : 'none',
                   cursor: 'pointer',
