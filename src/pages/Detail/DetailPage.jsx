@@ -1,167 +1,135 @@
-import React, { use } from 'react';
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './DetailPage.css';
 import { boardDetail } from '../api/게시판상세보기/detailService';
 import { comment } from '../api/comment/commentService';
 import { getCookie } from '../../js/getToken';
-import { useNavigate } from 'react-router-dom';
-import { deletePost } from '../api/delete/deleteService';
-import { addLike } from '../api/likeService/likeInsertService';
-import { deleteLike } from '../api/likeService/likeDeleteService';
 
-
-
-const CommunityDetail = () => {
-
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-
-  const navigate = useNavigate();
+const DetailPage = () => {
   const { idx } = useParams();
+  const navigate = useNavigate();
+  
   const [detail, setDetail] = useState(null);
-  useEffect(()=>{
+  const [loading, setLoading] = useState(true);
+
+  // 팔로우 상태 관리
+  const [isFollowing, setIsFollowing] = useState(false);
+  // 내 글인지 여부
+  const [isMine, setIsMine] = useState(false);
+
+  useEffect(() => {
     boardDetail(idx)
-    .then(res => {
-      if(res.status === 200){
-        console.log(res.data);
-        setDetail(res.data);
-        setIsLiked(res.data.checkedLike);
-        setLikeCount(res.data.post.likeCount);
-      }
-      
-      
-    }).catch(err => console.error(err));
+      .then(res => {
+        if (res.status === 200) {
+          console.log("게시글 상세 데이터:", res.data);
+          setDetail(res.data);
+
+          // ✅ [수정 1] 데이터 구조에 맞게 수정 (post.isMine -> mine)
+          // 로그에 따르면 mine은 root에 있습니다.
+          if (res.data.mine) {
+            setIsMine(true);
+          }
+
+          // 2. 팔로우 상태 확인 (post 안에 있는지 확인 필요)
+          if (res.data.post && res.data.post.isFollowed) {
+            setIsFollowing(true);
+          }
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("게시글을 불러오는 데 실패했습니다.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [idx]);
-  if(!detail){
-    return <div>Loading...</div>;
-  }
+
+  if (loading) return <div>Loading...</div>;
+  if (!detail) return <div>게시글 정보를 찾을 수 없습니다.</div>;
+
   const { post, roadmap, comments } = detail;
 
+  // ✅ [이동] 작성자 프로필 클릭
+  const handleProfileClick = () => {
+    const targetUserIdx = post.userIdx || post.writerIdx;
+    if (targetUserIdx) navigate(`/other/${targetUserIdx}`);
+  };
 
+  // ✅ [이동] 댓글 유저 프로필 클릭
+  const handleCommentUserClick = (commentUserIdx) => {
+    if (commentUserIdx) navigate(`/other/${commentUserIdx}`);
+    else alert("유저 정보를 찾을 수 없습니다.");
+  };
 
-  const handleLikeToggle = () => {
+  // 팔로우 핸들러
+  const handleFollow = async () => {
     const token = getCookie('token');
+    if (!token) return alert("로그인이 필요한 서비스입니다.");
 
+    const targetUserIdx = post.userIdx || post.writerIdx;
+    if (!targetUserIdx) return alert("작성자 정보를 찾을 수 없습니다.");
 
-    if (isLiked) {
-      // 1. 이미 좋아요 상태라면 -> 삭제(취소) API 호출
-      deleteLike(idx, token)
-        .then(res => {
-          setIsLiked(false);
-          setLikeCount(prev => prev - 1);
-        })
-        .catch(err => console.error("좋아요 취소 실패", err));
-    } else {
-      // 2. 좋아요가 아니라면 -> 추가 API 호출
-      addLike(idx, token) 
-        .then(res => {
-          setIsLiked(true);
-          setLikeCount(prev => prev + 1);
-        })
-        .catch(err => console.error("좋아요 추가 실패", err));
+    try {
+      await axios.post(`http://localhost:8085/api/follow/${targetUserIdx}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setIsFollowing(!isFollowing);
+    } catch (error) {
+      console.error("팔로우 실패:", error);
+      alert("팔로우 처리에 실패했습니다.");
     }
   };
 
-  const handleDelete = () => {
-    // 1. 여기서 "정말 삭제하겠습니까?" 창을 띄웁니다.
-    // 사용자가 '확인'을 누르면 true, '취소'를 누르면 false를 반환합니다.
-    if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?\n삭제된 글은 복구할 수 없습니다.")) {
-      
-      // 2. '확인'을 눌렀을 때만 아래 삭제 로직이 실행됩니다.
-      deletePost(idx)
-        .then(res => {
-          alert("삭제가 완료되었습니다.");
-          navigate('/CommunityPage'); // 목록 페이지로 이동
-        })
-        .catch(err => {
-          console.error("삭제 중 에러 발생:", err);
-          alert("삭제 처리에 실패했습니다.");
-        });
-
-    } else {
-      // 3. '취소'를 누르면 아무 일도 일어나지 않고 창만 닫힙니다.
-      console.log("사용자가 삭제를 취소했습니다.");
-    }
-  };
-
-  function inputcomment(){
+  // 댓글 등록
+  function inputcomment() {
     const content = document.getElementById("content");
     const token = getCookie('token');
-    if (!content.value.trim()) {
-      alert("내용을 입력해주세요.");
-      return;
-    }
-    console.log(idx);
+    if (!token) return alert("로그인 후 이용해주세요.");
+    if (!content.value.trim()) return alert("내용을 입력해주세요.");
 
-    const obj = {
-      content: content.value,   
-      token: token,
-      postIdx: idx
-    }
-    console.log(obj);
-    comment(obj)
-    .then(res => {
-      if(res.status === 200){
-        console.log(res.data);
-        window.location.reload();
-      }
-    })
-    
+    comment({ content: content.value, token: token, postIdx: idx })
+      .then(res => {
+        if (res.status === 200) window.location.reload();
+      })
+      .catch(err => alert("댓글 등록 중 오류가 발생했습니다."));
   }
-
 
   return (
     <div className="detail-page">
       <div className="detail-content-wrapper">
         <main className="post-main">
-          {/* 목록으로 돌아가기 버튼 (useNavigate 활용 추천) */}
-          <div className="back-btn" onClick={() => navigate('/CommunityPage')}>← 커뮤니티 목록으로 돌아가기</div>
-          {detail?.mine && (
-            <div className="owner-btns">
-              <button 
-                type="button" 
-                className="btn-edit" 
-                onClick={() => navigate(`/EditPage/${idx}`)} // ✅ 수정 페이지로 이동
-              >
-                ✏️ 수정
-              </button>
-              <button 
-                type="button" 
-                className="btn-delete"  // ✅ 삭제 함수 호출
-                onClick={handleDelete}
-              >
-                🗑️ 삭제
-              </button>
-            </div>
-          )}
+          <div className="back-btn" onClick={() => window.history.back()}>← 커뮤니티 목록으로 돌아가기</div>
+
           <header className="detail-header">
-            {/* ✅ 제목 매칭 */}
             <h1 className="detail-title">{post.title}</h1>
-            <div className="author-info-row">
-              <div className="author-profile-img"></div>
+            
+            <div 
+              className="author-info-row" 
+              onClick={handleProfileClick} 
+              style={{ cursor: 'pointer' }}
+              title="작가 프로필 방문하기"
+            >
+              <div className="author-profile-img">
+                {/* ✅ [수정 2] src가 빈 문자열("")일 때 경고 방지: || null 추가 */}
+                {post.profileImg ? (
+                  <img src={post.profileImg} alt="프로필" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', backgroundColor: '#ddd' }}></div>
+                )}
+              </div>
               <div className="author-text">
-                {/* ✅ 작성자, MBTI 매칭 */}
                 <div className="name-mbti">{post.nickname} <span className="mbti-badge">{post.mbti}</span></div>
-                {/* ✅ 작성일, 조회수 매칭 */}
                 <div className="post-meta">{post.createAt} · 조회수 {post.viewCount}</div>
               </div>
             </div>
           </header>
 
           <article className="post-article">
-            {/* 이미지 컬럼이 DB에 있다면 추가하고, 없다면 우선 고정 이미지를 유지합니다 */}
-            
-            
-            {/* ✅ 본문 내용 매칭 */}
-            <div 
-              className="post-content-html"
-              dangerouslySetInnerHTML={{ __html: post.content }} 
-            />
+            <div className="post-content-html" dangerouslySetInnerHTML={{ __html: post.content }} />
 
             <h3>AI가 추천한 오늘의 루트</h3>
-
-            {/* AI 플래너 로드맵 카드 */}
             <div className="roadmap-container">
               <div className="roadmap-header">
                 <span className="sparkle-icon">✨</span>
@@ -171,40 +139,58 @@ const CommunityDetail = () => {
                 </div>
               </div>
               <div className="timeline">
-                {/* ✅ 로드맵 리스트 매칭 (PLAN_DETAIL 데이터) */}
-                {roadmap && roadmap.map((item, index) => (
-                  <div key={index} className="timeline-item">
-                    <div className="time-dot"></div>
-                    <div className="timeline-content">
-                      <div className="item-header">
-                        {/* ✅ 시간 - 장소명 매칭 */}
-                        <span className="item-time-place">{item.visitTime} - {item.planTitle}</span>
-                        {/* ✅ 태그/배지 매칭 (DB의 types 활용) */}
-                        <span className="item-label">{item.types}</span>
-                      </div>
-                      {/* ✅ 메모 매칭 */}
-                      <p className="item-desc">{item.memo}</p>
-                      <div className="item-tags">
-                        <span>#{item.address}</span>
+                {roadmap && roadmap.length > 0 ? (
+                  roadmap.map((item, index) => (
+                    <div key={index} className="timeline-item">
+                      <div className="time-dot"></div>
+                      <div className="timeline-content">
+                        <div className="item-header">
+                          <span className="item-time-place">{item.visitTime} - {item.planTitle}</span>
+                          <span className="item-label">{item.types}</span>
+                        </div>
+                        <p className="item-desc">{item.memo}</p>
+                        <div className="item-tags"><span>#{item.address}</span></div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p style={{ padding: '20px', color: '#999', textAlign: 'center' }}>로드맵 정보가 없습니다.</p>
+                )}
               </div>
             </div>
           </article>
 
           {/* 댓글 섹션 */}
           <section className="comment-section">
-            <h3>댓글 {comments.length}개</h3>
+            <h3>댓글 {comments ? comments.length : 0}개</h3>
             <div className="comment-list">
-              {/* ✅ 댓글 리스트 매칭 */}
-              {comments.map(c => (
+              {comments && comments.map(c => (
                 <div key={c.idx} className="comment-card">
-                  <div className="comment-user-img"></div>
+                  
+                  {/* 댓글 작성자 프사 클릭 */}
+                  <div 
+                    className="comment-user-img"
+                    onClick={() => handleCommentUserClick(c.userIdx)}
+                    style={{ 
+                        cursor: 'pointer',
+                        // ✅ [수정 3] 배경 이미지도 값이 없으면 none 처리
+                        backgroundImage: c.profileImg ? `url(${c.profileImg})` : 'none',
+                        backgroundColor: c.profileImg ? 'transparent' : '#ddd',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }}
+                  ></div>
+
                   <div className="comment-body">
                     <div className="comment-user-info">
-                      <span className="c-name">{c.nickname} <span className="c-mbti">{c.mbti}</span></span>
+                      {/* 댓글 작성자 닉네임 클릭 */}
+                      <span 
+                        className="c-name" 
+                        onClick={() => handleCommentUserClick(c.userIdx)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {c.nickname} <span className="c-mbti">{c.mbti}</span>
+                      </span>
                       <span className="c-time">{c.createAt}</span>
                     </div>
                     <p className="c-text">{c.content}</p>
@@ -212,43 +198,62 @@ const CommunityDetail = () => {
                 </div>
               ))}
             </div>
+            
             <div className="comment-input-area">
               <div className="comment-user-img"></div>
               <div className="input-box">
-                <textarea placeholder="댓글을 남겨주세요..." id = "content"></textarea>
+                <textarea placeholder="댓글을 남겨주세요..." id="content"></textarea>
                 <button className="submit-comment" onClick={inputcomment}>등록하기</button>
               </div>
             </div>
           </section>
         </main>
 
-        {/* 오른쪽 사이드바 영역 */}
         <aside className="post-sidebar">
           <div className="sidebar-stats">
-            {/* ✅ 좋아요 수 매칭 */}
-            <div 
-              className={`stat-item like-btn ${isLiked ? 'active' : ''}`} 
-              onClick={handleLikeToggle}
-              style={{ cursor: 'pointer' }}
-            >
-              <span style={{ color: isLiked ? 'red' : 'inherit' }}>
-                {isLiked ? '❤️' : '🤍'}
-              </span> 
-              좋아요 <strong>{likeCount}</strong>
-            </div>
+            {/* 좋아요 정보가 post가 아니라 detail 루트(checkedLike)에 있을 수도 있음 */}
+            <div className="stat-item"><span>❤️</span> 좋아요 <strong>{post.likeCount || 0}</strong></div>
+            <div className="stat-item"><span>🔗</span> 공유하기</div>
           </div>
 
           <div className="about-author-card">
             <p className="about-label">ABOUT AUTHOR</p>
             <div className="author-card-content">
+              <div className="author-avatar-large">
+                {/* ✅ [수정 4] src 경고 방지 */}
+                {post.profileImg ? (
+                  <img src={post.profileImg} alt="작가 프로필" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', backgroundColor: '#eee' }}></div>
+                )}
+              </div>
               <div className="author-card-info">
                 <h4>{post.nickname}</h4>
-                <p>{post.userGrade}</p>
+                <p>{post.userGrade || "여행자"}</p>
               </div>
             </div>
-            {/* ✅ 작가 소개 매칭 */}
             <p className="author-intro">{post.userIntro || "소개글이 없습니다."}</p>
-            <button className="follow-btn">팔로우 하기</button>
+
+            {!isMine && (
+              <button
+                className="follow-btn"
+                onClick={handleFollow}
+                style={{
+                  backgroundColor: isFollowing ? '#e0e0e0' : '#6c5ce7',
+                  color: isFollowing ? '#555' : '#fff',
+                  border: isFollowing ? '1px solid #ccc' : 'none',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s ease',
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '8px',
+                  marginTop: '15px'
+                }}
+              >
+                {isFollowing ? "팔로우 취소" : "팔로우 하기"}
+              </button>
+            )}
           </div>
         </aside>
       </div>
@@ -256,4 +261,4 @@ const CommunityDetail = () => {
   );
 };
 
-export default CommunityDetail;
+export default DetailPage;

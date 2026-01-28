@@ -44,6 +44,7 @@ function App() {
           <Route path="/DetailPage/:idx" element ={<DetailPage />} />
           <Route path="/plan/edit/:planIdx" element={<PlanEditPage />} />
            <Route path="/my-travels" element={<MyTravelPage />} />
+           <Route path="/other/:userIdx" element={<OtherPage />} />
         </Routes>
       </div>
     </Router>
