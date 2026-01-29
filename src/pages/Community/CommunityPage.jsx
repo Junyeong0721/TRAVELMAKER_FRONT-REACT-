@@ -20,6 +20,11 @@ const Community = () => {
   const limit = 4;
   const totalPages = Math.ceil(totalPosts / limit) || 1;
 
+  const [activeCategory, setActiveCategory] = useState('all');
+
+  // 1. 검색어 상태 추가
+  const [searchTerm, setSearchTerm] = useState('');
+
   useEffect(() => {
   // 전체 개수를 가져오는 API 호출 (예: boardCount())
   boardCount().then(res => {
@@ -73,6 +78,24 @@ const Community = () => {
           })
           .catch(err => console.error(err));
     };
+      // 2. 검색 실행 함수
+  const handleSearch = (pagenum = 1) => {
+  const offset = (pagenum - 1) * 4;
+  setActiveCategory('search'); // 현재 상태를 '검색'으로 변경
+
+  // 1. 검색 결과 목록 가져오기
+  boardList(offset, searchTerm)
+    .then(res => {
+      setPosts(res.data);
+      setCurrentPage(pagenum);
+    });
+
+  // 2. 검색 결과 전체 개수 가져오기 (이걸 해야 페이지 번호가 바뀝니다!)
+  // 백엔드 주소(/api/board/searchCount)에 맞춰서 호출
+  fetch(`/api/board/searchCount?keyword=${searchTerm}`)
+    .then(res => res.json())
+    .then(data => setTotalPosts(data));
+};
 
 
   return (
@@ -82,12 +105,32 @@ const Community = () => {
         <aside className="sidebar">
           <section className="category-section">
             <h4>게시판 카테고리</h4>
-            <ul>
-              <li className="active" onClick={e => ViewList(1)}><span>📊</span> 전체 글</li>
-              <li onClick={e => BestList(1)}><span>📈</span> 인기 게시글</li>
-              <li onClick={e => MyList(1)}><span>📝</span> 내 게시글</li>
-              <li><span>🔖</span> 저장한 글</li>
-            </ul>
+            <div className="category-buttons">
+              <button 
+                className={`category-btn ${activeCategory === 'all' ? 'active' : ''}`} 
+                onClick={() => { ViewList(1); setActiveCategory('all'); }}
+              >
+                <span>📊</span> 전체 글
+              </button>
+              
+              <button 
+                className={`category-btn ${activeCategory === 'best' ? 'active' : ''}`} 
+                onClick={() => { BestList(1); setActiveCategory('best'); }}
+              >
+                <span>📈</span> 인기 게시글
+              </button>
+              
+              <button 
+                className={`category-btn ${activeCategory === 'my' ? 'active' : ''}`} 
+                onClick={() => { MyList(1); setActiveCategory('my'); }}
+              >
+                <span>📝</span> 내 게시글
+              </button>
+              
+              <button className="category-btn">
+                <span>🔖</span> 저장한 글
+              </button>
+            </div>
           </section>
 
           <section className="writer-card">
@@ -104,9 +147,12 @@ const Community = () => {
           <div className="search-filter-bar">
             <div className="search-input-box">
               <span className="search-icon">🔍</span>
-              <input type="text" placeholder="여행지, 키워드, MBTI로 검색해보세요" />
+              <input type="text" placeholder="여행지, 키워드, MBTI로 검색해보세요" value={searchTerm} // 추가
+              onChange={(e) => setSearchTerm(e.target.value)} // 추가: 입력값 실시간 저장
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch(1)} // 추가: 엔터키 지원
+            />
             </div>
-            <button className="write-post-btn" onClick={e => console.log(posts.thumbnail)}>검색</button>
+            <button className="write-post-btn" onClick={() => handleSearch(1)}>검색</button>
             <button className="write-post-btn" onClick={e=> navigate('/WritePage')}>➕ 글쓰기</button>
           </div>
 

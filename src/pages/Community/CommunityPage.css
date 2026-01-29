@@ -47,28 +47,53 @@
     font-size: 0.9rem;
 }
 
-.category-section ul {
-    list-style: none;
-    padding: 0;
+/* 버튼들을 감싸는 컨테이너 (flex 방향 설정) */
+.category-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.category-section li {
+/* 개별 카테고리 버튼 기본 스타일 */
+.category-btn {
+    width: 100%;
     padding: 12px 15px;
     border-radius: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 5px;
     transition: 0.2s;
+    
+    /* 버튼 기본 속성 초기화 */
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    color: var(--text-main);
+    text-align: left;
 }
 
-.category-section li.active {
+/* 마우스 호버 시 효과 */
+.category-btn:hover {
+    background: #f5f5f5;
+}
+
+/* 활성화(선택됨) 상태 스타일 */
+.category-btn.active {
     background: var(--primary-soft);
     color: var(--primary);
     font-weight: bold;
 }
 
+/* 버튼 내 아이콘(이모지) 스타일 */
+.category-btn span {
+    font-size: 1.1rem;
+}
+
+/* (참고) 비활성 버튼(저장한 글 등)에 대한 텍스트 색상 보정 */
+.category-btn:not(.active) {
+    color: var(--text-sub);
+}
 
 /* 사이드바 배너 */
 
