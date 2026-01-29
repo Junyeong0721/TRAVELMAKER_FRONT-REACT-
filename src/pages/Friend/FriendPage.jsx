@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axiosSetting'; // axios 설정 파일 경로 확인
 import './FriendPage.css';
 
 const FriendPage = () => {
   // 1. 상태 관리
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('following'); 
   const [userList, setUserList] = useState([]); 
   const [loading, setLoading] = useState(false);
@@ -12,6 +14,8 @@ const FriendPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [keyword, setKeyword] = useState("");            
   const [searchResult, setSearchResult] = useState([]);  
+  
+  
 
   const myInfo = {
     nickname: "김여행",
@@ -175,11 +179,22 @@ const FriendPage = () => {
             </div>
 
             <nav className="sidebar-menu">
-              <div className="menu-item">👤 내 정보 관리</div>
-              <div className="menu-item active">👥 네트워크 관리</div>
-              <div className="menu-item">⚙️ AI 맞춤 설정</div>
-              <div className="menu-item">🧠 MBTI 분석</div>
-              <div className="menu-item logout">📤 로그아웃</div>
+              <div 
+                className="menu-item" 
+                onClick={() => navigate('/mypage')} // 실제 마이페이지 경로
+                style={{ cursor: 'pointer' }}
+              >
+                👤 내 정보 관리
+              </div>
+
+              {/* 현재 페이지이므로 active 클래스 유지 */}
+              <div 
+                className="menu-item active"
+                onClick={() => navigate('/friends')} // 현재 페이지 경로
+                style={{ cursor: 'pointer' }}
+              >
+                🔖 친구 관리
+              </div>
             </nav>
             <div className="invite-banner">
                   <div className="banner-content">

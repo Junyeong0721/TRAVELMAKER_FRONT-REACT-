@@ -39,10 +39,7 @@ const Layout = () => {
           </Link>
           <nav className="header-nav">
             <Link to="/">홈</Link>
-            <span>기능</span>
-            <span>여행지</span>
              <Link to="/CommunityPage">커뮤니티</Link>
-            <span>도움말</span>
           </nav>
           <div className="header-right">
             {isLoggedIn ? (

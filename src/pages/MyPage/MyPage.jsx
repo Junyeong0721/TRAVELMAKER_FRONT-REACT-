@@ -55,12 +55,22 @@ const MyPage = () => {
             </div>
 
             <nav className="sidebar-menu">
-              <div className="menu-item active">👤 내 정보 관리</div>
-              <div className="menu-item">🔖 저장된 여행지</div>
-              <div className="menu-item">⚙️ AI 맞춤 설정</div>
-              <div className="menu-item">🧠 MBTI 분석</div>
-              <div className="menu-item">🔖 저장된 여행지</div>
-              <div className="menu-item logout">📤 로그아웃</div>
+              <div 
+                className={`menu-item ${window.location.pathname === '/mypage' ? 'active' : ''}`}
+                onClick={() => navigate('/mypage')}
+                style={{ cursor: 'pointer' }}
+              >
+                👤 내 정보 관리
+              </div>
+
+              {/* 친구 관리 클릭 시 이동 */}
+              <div 
+                className="menu-item" 
+                onClick={() => navigate('/friendPage')} // ★ 친구 관리 경로로 이동
+                style={{ cursor: 'pointer' }}       // 마우스 커서를 손가락 모양으로 변경
+              >
+                🔖 친구 관리
+              </div>
             </nav>
           </aside>
 
