@@ -5,10 +5,14 @@ import './DetailPage.css';
 import { boardDetail } from '../api/게시판상세보기/detailService';
 import { comment } from '../api/comment/commentService';
 import { getCookie } from '../../js/getToken';
+import { addLike } from '../api/likeService/likeInsertService';
+import { deleteLike } from '../api/likeService/likeDeleteService';
 
 const DetailPage = () => {
   const { idx } = useParams();
   const navigate = useNavigate();
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,7 +26,10 @@ const DetailPage = () => {
     boardDetail(idx)
       .then(res => {
         if (res.status === 200) {
+          console.log(res.data);
           setDetail(res.data);
+          setIsLiked(res.data.checkedLike);
+          setLikeCount(res.data.post.likeCount);
 
           if (res.data.mine) setIsMine(true);
           if (res.data.post && res.data.post.isFollowed) setIsFollowing(true);
@@ -76,6 +83,50 @@ const DetailPage = () => {
 
   // 그룹화된 데이터 가져오기
   const groupedRoadmap = getGroupedRoadmap();
+
+ const handleLikeToggle = () => {
+
+    const token = getCookie('token');
+
+
+
+
+
+    if (isLiked) {
+
+      // 1. 이미 좋아요 상태라면 -> 삭제(취소) API 호출
+
+      deleteLike(idx, token)
+
+        .then(res => {
+
+          setIsLiked(false);
+
+          setLikeCount(prev => prev - 1);
+
+        })
+
+        .catch(err => console.error("좋아요 취소 실패", err));
+
+    } else {
+
+      // 2. 좋아요가 아니라면 -> 추가 API 호출
+
+      addLike(idx, token)
+
+        .then(res => {
+
+          setIsLiked(true);
+
+          setLikeCount(prev => prev + 1);
+
+        })
+
+        .catch(err => console.error("좋아요 추가 실패", err));
+
+    }
+
+  };
 
   // 이동 핸들러들
   const handleProfileClick = () => {
@@ -223,8 +274,27 @@ const DetailPage = () => {
 
         <aside className="post-sidebar">
           <div className="sidebar-stats">
-            <div className="stat-item"><span>❤️</span> 좋아요 <strong>{post.likeCount || 0}</strong></div>
-            <div className="stat-item"><span>🔗</span> 공유하기</div>
+            {/* ✅ 좋아요 수 매칭 */}
+
+            <div
+
+              className={`stat-item like-btn ${isLiked ? 'active' : ''}`}
+
+              onClick={handleLikeToggle}
+
+              style={{ cursor: 'pointer' }}
+
+            >
+
+              <span style={{ color: isLiked ? 'red' : 'inherit' }}>
+
+                {isLiked ? '❤️' : '🤍'}
+
+              </span>
+
+              좋아요 <strong>{likeCount}</strong>
+
+            </div>
           </div>
           <div className="about-author-card">
             <p className="about-label">ABOUT AUTHOR</p>
