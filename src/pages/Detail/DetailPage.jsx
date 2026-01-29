@@ -7,6 +7,7 @@ import { comment } from '../api/comment/commentService';
 import { getCookie } from '../../js/getToken';
 import { addLike } from '../api/likeService/likeInsertService';
 import { deleteLike } from '../api/likeService/likeDeleteService';
+import { deletePost } from '../api/delete/deleteService';
 
 const DetailPage = () => {
   const { idx } = useParams();
@@ -46,6 +47,28 @@ const DetailPage = () => {
 
   if (loading) return <div>Loading...</div>;
   if (!detail) return <div>게시글 정보를 찾을 수 없습니다.</div>;
+
+  const handleDelete = () => {
+    // 1. 여기서 "정말 삭제하겠습니까?" 창을 띄웁니다.
+    // 사용자가 '확인'을 누르면 true, '취소'를 누르면 false를 반환합니다.
+    if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?\n삭제된 글은 복구할 수 없습니다.")) {
+      
+      // 2. '확인'을 눌렀을 때만 아래 삭제 로직이 실행됩니다.
+      deletePost(idx)
+        .then(res => {
+          alert("삭제가 완료되었습니다.");
+          navigate('/CommunityPage'); // 목록 페이지로 이동
+        })
+        .catch(err => {
+          console.error("삭제 중 에러 발생:", err);
+          alert("삭제 처리에 실패했습니다.");
+        });
+
+    } else {
+      // 3. '취소'를 누르면 아무 일도 일어나지 않고 창만 닫힙니다.
+      console.log("사용자가 삭제를 취소했습니다.");
+    }
+  };
 
   const { post, roadmap, comments } = detail;
 
@@ -172,8 +195,25 @@ const DetailPage = () => {
     <div className="detail-page">
       <div className="detail-content-wrapper">
         <main className="post-main">
-          <div className="back-btn" onClick={() => window.history.back()}>← 커뮤니티 목록으로 돌아가기</div>
-
+          <div className="back-btn" onClick={() => navigate('/CommunityPage')}>← 커뮤니티 목록으로 돌아가기</div>
+          {detail?.mine && (
+            <div className="owner-btns">
+              <button 
+                type="button" 
+                className="btn-edit" 
+                onClick={() => navigate(`/EditPage/${idx}`)} // ✅ 수정 페이지로 이동
+              >
+                ✏️ 수정
+              </button>
+              <button 
+                type="button" 
+                className="btn-delete"  // ✅ 삭제 함수 호출
+                onClick={handleDelete}
+              >
+                🗑️ 삭제
+              </button>
+            </div>
+          )}
           <header className="detail-header">
             <h1 className="detail-title">{post.title}</h1>
             <div 
