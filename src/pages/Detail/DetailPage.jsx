@@ -22,19 +22,10 @@ const DetailPage = () => {
     boardDetail(idx)
       .then(res => {
         if (res.status === 200) {
-          console.log("게시글 상세 데이터:", res.data);
           setDetail(res.data);
 
-          // ✅ [수정 1] 데이터 구조에 맞게 수정 (post.isMine -> mine)
-          // 로그에 따르면 mine은 root에 있습니다.
-          if (res.data.mine) {
-            setIsMine(true);
-          }
-
-          // 2. 팔로우 상태 확인 (post 안에 있는지 확인 필요)
-          if (res.data.post && res.data.post.isFollowed) {
-            setIsFollowing(true);
-          }
+          if (res.data.mine) setIsMine(true);
+          if (res.data.post && res.data.post.isFollowed) setIsFollowing(true);
         }
       })
       .catch(err => {
@@ -51,19 +42,52 @@ const DetailPage = () => {
 
   const { post, roadmap, comments } = detail;
 
-  // ✅ [이동] 작성자 프로필 클릭
+  // ✅ [핵심 기능] 로드맵을 일차(Day)별로 그룹화하는 함수
+  const getGroupedRoadmap = () => {
+    if (!roadmap || roadmap.length === 0) return {};
+
+    let currentDay = 1;
+    const grouped = {};
+
+    roadmap.forEach((item, index) => {
+      // 1. 첫 번째 아이템이 아니고,
+      // 2. 현재 시간이 이전 시간보다 빠르다면 (예: 18:00 -> 09:00) 다음 날로 간주
+      if (index > 0) {
+        const prevTime = roadmap[index - 1].visitTime; // "18:00:00"
+        const currTime = item.visitTime;               // "09:00:00"
+        
+        // 문자열 비교로 시간 역전 감지
+        if (currTime < prevTime) {
+          currentDay++;
+        }
+      }
+
+      // 그룹 배열이 없으면 생성
+      if (!grouped[currentDay]) {
+        grouped[currentDay] = [];
+      }
+      
+      // 해당 일차에 아이템 추가
+      grouped[currentDay].push(item);
+    });
+
+    return grouped;
+  };
+
+  // 그룹화된 데이터 가져오기
+  const groupedRoadmap = getGroupedRoadmap();
+
+  // 이동 핸들러들
   const handleProfileClick = () => {
     const targetUserIdx = post.userIdx || post.writerIdx;
     if (targetUserIdx) navigate(`/other/${targetUserIdx}`);
   };
 
-  // ✅ [이동] 댓글 유저 프로필 클릭
   const handleCommentUserClick = (commentUserIdx) => {
     if (commentUserIdx) navigate(`/other/${commentUserIdx}`);
     else alert("유저 정보를 찾을 수 없습니다.");
   };
 
-  // 팔로우 핸들러
   const handleFollow = async () => {
     const token = getCookie('token');
     if (!token) return alert("로그인이 필요한 서비스입니다.");
@@ -82,7 +106,6 @@ const DetailPage = () => {
     }
   };
 
-  // 댓글 등록
   function inputcomment() {
     const content = document.getElementById("content");
     const token = getCookie('token');
@@ -90,9 +113,7 @@ const DetailPage = () => {
     if (!content.value.trim()) return alert("내용을 입력해주세요.");
 
     comment({ content: content.value, token: token, postIdx: idx })
-      .then(res => {
-        if (res.status === 200) window.location.reload();
-      })
+      .then(res => { if (res.status === 200) window.location.reload(); })
       .catch(err => alert("댓글 등록 중 오류가 발생했습니다."));
   }
 
@@ -104,7 +125,6 @@ const DetailPage = () => {
 
           <header className="detail-header">
             <h1 className="detail-title">{post.title}</h1>
-            
             <div 
               className="author-info-row" 
               onClick={handleProfileClick} 
@@ -112,7 +132,6 @@ const DetailPage = () => {
               title="작가 프로필 방문하기"
             >
               <div className="author-profile-img">
-                {/* ✅ [수정 2] src가 빈 문자열("")일 때 경고 방지: || null 추가 */}
                 {post.profileImg ? (
                   <img src={post.profileImg} alt="프로필" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
                 ) : (
@@ -138,19 +157,38 @@ const DetailPage = () => {
                   <p>{post.nickname}님의 {post.mbti} 성향에 맞춘 최적화 경로</p>
                 </div>
               </div>
+
+              {/* ✅ [수정] 일차별로 렌더링 */}
               <div className="timeline">
-                {roadmap && roadmap.length > 0 ? (
-                  roadmap.map((item, index) => (
-                    <div key={index} className="timeline-item">
-                      <div className="time-dot"></div>
-                      <div className="timeline-content">
-                        <div className="item-header">
-                          <span className="item-time-place">{item.visitTime} - {item.planTitle}</span>
-                          <span className="item-label">{item.types}</span>
-                        </div>
-                        <p className="item-desc">{item.memo}</p>
-                        <div className="item-tags"><span>#{item.address}</span></div>
+                {Object.keys(groupedRoadmap).length > 0 ? (
+                  Object.keys(groupedRoadmap).map((day) => (
+                    <div key={day} className="day-section">
+                      
+                      {/* 일차 표시 헤더 (Day 1, Day 2 ...) */}
+                      <div className="day-header" style={{
+                          padding: '10px 0', 
+                          fontWeight: 'bold', 
+                          color: '#5D5FEF', 
+                          borderBottom: '1px dashed #ddd',
+                          marginBottom: '15px',
+                          marginTop: day > 1 ? '30px' : '0'
+                      }}>
+                        📅 Day {day}
                       </div>
+
+                      {groupedRoadmap[day].map((item, index) => (
+                        <div key={index} className="timeline-item">
+                          <div className="time-dot"></div>
+                          <div className="timeline-content">
+                            <div className="item-header">
+                              <span className="item-time-place">{item.visitTime} - {item.planTitle}</span>
+                              <span className="item-label">{item.types}</span>
+                            </div>
+                            <p className="item-desc">{item.memo}</p>
+                            <div className="item-tags"><span>#{item.address}</span></div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ))
                 ) : (
@@ -160,35 +198,25 @@ const DetailPage = () => {
             </div>
           </article>
 
-          {/* 댓글 섹션 */}
           <section className="comment-section">
             <h3>댓글 {comments ? comments.length : 0}개</h3>
             <div className="comment-list">
               {comments && comments.map(c => (
                 <div key={c.idx} className="comment-card">
-                  
-                  {/* 댓글 작성자 프사 클릭 */}
                   <div 
                     className="comment-user-img"
                     onClick={() => handleCommentUserClick(c.userIdx)}
                     style={{ 
                         cursor: 'pointer',
-                        // ✅ [수정 3] 배경 이미지도 값이 없으면 none 처리
                         backgroundImage: c.profileImg ? `url(${c.profileImg})` : 'none',
                         backgroundColor: c.profileImg ? 'transparent' : '#ddd',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
                     }}
                   ></div>
-
                   <div className="comment-body">
                     <div className="comment-user-info">
-                      {/* 댓글 작성자 닉네임 클릭 */}
-                      <span 
-                        className="c-name" 
-                        onClick={() => handleCommentUserClick(c.userIdx)}
-                        style={{ cursor: 'pointer' }}
-                      >
+                      <span className="c-name" onClick={() => handleCommentUserClick(c.userIdx)} style={{ cursor: 'pointer' }}>
                         {c.nickname} <span className="c-mbti">{c.mbti}</span>
                       </span>
                       <span className="c-time">{c.createAt}</span>
@@ -198,7 +226,6 @@ const DetailPage = () => {
                 </div>
               ))}
             </div>
-            
             <div className="comment-input-area">
               <div className="comment-user-img"></div>
               <div className="input-box">
@@ -211,16 +238,13 @@ const DetailPage = () => {
 
         <aside className="post-sidebar">
           <div className="sidebar-stats">
-            {/* 좋아요 정보가 post가 아니라 detail 루트(checkedLike)에 있을 수도 있음 */}
             <div className="stat-item"><span>❤️</span> 좋아요 <strong>{post.likeCount || 0}</strong></div>
             <div className="stat-item"><span>🔗</span> 공유하기</div>
           </div>
-
           <div className="about-author-card">
             <p className="about-label">ABOUT AUTHOR</p>
             <div className="author-card-content">
               <div className="author-avatar-large">
-                {/* ✅ [수정 4] src 경고 방지 */}
                 {post.profileImg ? (
                   <img src={post.profileImg} alt="작가 프로필" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
                 ) : (
@@ -233,7 +257,6 @@ const DetailPage = () => {
               </div>
             </div>
             <p className="author-intro">{post.userIntro || "소개글이 없습니다."}</p>
-
             {!isMine && (
               <button
                 className="follow-btn"
@@ -261,4 +284,4 @@ const DetailPage = () => {
   );
 };
 
-export default DetailPage;
+export default DetailPage;    
