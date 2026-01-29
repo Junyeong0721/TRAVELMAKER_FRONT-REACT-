@@ -36,6 +36,23 @@ body {
   align-items: center;
   padding: 0 20px;
 }
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* 닉네임과 버튼 사이의 간격을 좁게 고정 */
+}
+.user-name {
+ font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+.header-right button {
+  cursor: pointer;
+}
+
+.header-right button:hover {
+  color: #ff4d4f; /* 호버 시 약간 붉은색으로 변화 (선택사항) */
+}
 
 .logo-link {
   text-decoration: none;
