@@ -36,6 +36,7 @@ function App() {
             <Route path="/WriteInfo" element ={<WriteInfo />} />
             <Route path="/OtherPage" element ={<OtherPage/>} />
             <Route path="/AiPage" element ={<AiPage />} />
+            <Route path="/other/:userIdx" element={<OtherPage />} />
           </Route>
 
           {/* 기타 페이지 */}
@@ -44,7 +45,6 @@ function App() {
           <Route path="/DetailPage/:idx" element ={<DetailPage />} />
           <Route path="/plan/edit/:planIdx" element={<PlanEditPage />} />
            <Route path="/my-travels" element={<MyTravelPage />} />
-           <Route path="/other/:userIdx" element={<OtherPage />} />
         </Routes>
       </div>
     </Router>

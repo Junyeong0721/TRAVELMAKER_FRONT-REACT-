@@ -45,7 +45,7 @@ const Main = () => {
     <div className="main-container">
       {/* Navbar */}
       <header className="navbar">
-        <div className="logo">TripMate <span className="logo-sub">Travel Companion</span></div>
+        <div className="logo">TripMaker <span className="logo-sub">Travel Companion</span></div>
   
         <div className="nav-actions">
           {/* 6. 조건부 렌더링 적용 */}
@@ -63,7 +63,7 @@ const Main = () => {
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
-          <h1>당신이 꿈꾸는 여행을<br />TripMate와 함께</h1>
+          <h1>당신이 꿈꾸는 여행을<br />TripMaker와 함께</h1>
           <p>세상의 아름다운 곳을 쉽고 편하게 계획하세요.<br />개인 맞춤형 일정부터 현지 정보까지, 모든 것을 한 곳에서.</p>
           <div className="hero-btns">
             <button className="btn-primary">무료 시작하기</button>
@@ -81,13 +81,7 @@ const Main = () => {
       </section>
 
       {/* Category Filter Bar */}
-      <div className="filter-bar">
-        <button className="filter-item active">🔵 모두 보기</button>
-        <button className="filter-item">🪄 AI</button>
-        <button className="filter-item">📊 프레젠테이션</button>
-        <button className="filter-item">⭐ SNS</button>
-        <button className="filter-item">👥 동영상</button>
-      </div>
+      
 
       {/* Feature Cards Section (컬러 카드 유지) */}
       <section className="feature-grid">
@@ -136,17 +130,7 @@ const Main = () => {
         </div>
       </section>
 
-      {/* Footer CTA */}
-      <section className="footer-cta">
-        <div className="cta-box">
-          <h2>지금 바로 여행 계획을 시작하세요</h2>
-          <p>TripMate와 함께라면 완벽한 여행이 당신을 기다립니다</p>
-          <div className="cta-btns">
-            <button className="btn-primary-blue"onClick={e=>{navigate('/Login')}}>무료로 시작하기</button>
-            <button className="btn-outline">데모 보기</button>
-          </div>
-        </div>
-      </section>
+     
     </div>
   );
 };
