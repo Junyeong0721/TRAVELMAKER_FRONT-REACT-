@@ -127,9 +127,7 @@ const Community = () => {
                 <span>📝</span> 내 게시글
               </button>
               
-              <button className="category-btn">
-                <span>🔖</span> 저장한 글
-              </button>
+              
             </div>
           </section>
 
@@ -137,7 +135,7 @@ const Community = () => {
             <div className="writer-card-content">
               <h3>나만의 여행 작가가 되어보세요!</h3>
               <p>나의 특별한 여행 경험을 공유하고 다른 여행자들에게 영감을 주세요.</p>
-              <button className="guide-btn" onClick={e => navigate('/WritePage')}>가이드 작성하기</button>
+              <button className="guide-btn" onClick={e => navigate('/WritePage')}>지금 시작하기</button>
             </div>
           </section>
         </aside>
