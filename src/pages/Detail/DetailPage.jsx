@@ -131,13 +131,7 @@ const DetailPage = () => {
               style={{ cursor: 'pointer' }}
               title="작가 프로필 방문하기"
             >
-              <div className="author-profile-img">
-                {post.profileImg ? (
-                  <img src={post.profileImg} alt="프로필" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', backgroundColor: '#ddd' }}></div>
-                )}
-              </div>
+
               <div className="author-text">
                 <div className="name-mbti">{post.nickname} <span className="mbti-badge">{post.mbti}</span></div>
                 <div className="post-meta">{post.createAt} · 조회수 {post.viewCount}</div>
@@ -203,18 +197,10 @@ const DetailPage = () => {
             <div className="comment-list">
               {comments && comments.map(c => (
                 <div key={c.idx} className="comment-card">
-                  <div 
-                    className="comment-user-img"
-                    onClick={() => handleCommentUserClick(c.userIdx)}
-                    style={{ 
-                        cursor: 'pointer',
-                        backgroundImage: c.profileImg ? `url(${c.profileImg})` : 'none',
-                        backgroundColor: c.profileImg ? 'transparent' : '#ddd',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                    }}
-                  ></div>
-                  <div className="comment-body">
+
+                  <div className="comment-body" style={{ marginLeft: '10px' ,
+                    marginTop: '10px'
+                  }}>
                     <div className="comment-user-info">
                       <span className="c-name" onClick={() => handleCommentUserClick(c.userIdx)} style={{ cursor: 'pointer' }}>
                         {c.nickname} <span className="c-mbti">{c.mbti}</span>
@@ -227,7 +213,6 @@ const DetailPage = () => {
               ))}
             </div>
             <div className="comment-input-area">
-              <div className="comment-user-img"></div>
               <div className="input-box">
                 <textarea placeholder="댓글을 남겨주세요..." id="content"></textarea>
                 <button className="submit-comment" onClick={inputcomment}>등록하기</button>

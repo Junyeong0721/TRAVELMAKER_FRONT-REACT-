@@ -74,13 +74,6 @@ const OtherPage = () => {
         {/* 상단 프로필 영역 */}
         <section className="profile-header">
           <div className="profile-main-info">
-            <div className="profile-img-area" style={{marginRight:'20px'}}>
-                {profile.profileImg ? (
-                    <img src={profile.profileImg} alt="프사" style={{width:'80px', height:'80px', borderRadius:'50%', objectFit:'cover'}}/>
-                ) : (
-                    <div style={{width:'80px', height:'80px', borderRadius:'50%', backgroundColor:'#ddd'}}></div>
-                )}
-            </div>
 
             <div className="profile-details">
               <div className="name-row">
