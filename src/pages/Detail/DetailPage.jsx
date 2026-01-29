@@ -13,19 +13,47 @@ const DetailPage = () => {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 팔로우 상태 관리
-  const [isFollowing, setIsFollowing] = useState(false);
-  // 내 글인지 여부
-  const [isMine, setIsMine] = useState(false);
+  // 상태 관리
+  const [isFollowing, setIsFollowing] = useState(false); // 팔로우 여부
+  const [isMine, setIsMine] = useState(false);         // 내 글 여부
+  const [isLiked, setIsLiked] = useState(false);       // 좋아요 여부
+  const [likeCount, setLikeCount] = useState(0);       // 좋아요 개수
 
   useEffect(() => {
+    // API 호출 (detailService.js에서 토큰 헤더 꼭 확인하세요!)
     boardDetail(idx)
       .then(res => {
         if (res.status === 200) {
+          console.log("🔍 게시글 상세 데이터 확인:", res.data); // 데이터 구조 확인용 로그
           setDetail(res.data);
 
-          if (res.data.mine) setIsMine(true);
-          if (res.data.post && res.data.post.isFollowed) setIsFollowing(true);
+          const data = res.data;
+          const postData = data.post;
+
+          // 1. 내 글인지 확인
+          if (data.mine || (postData && postData.mine)) {
+            setIsMine(true);
+          }
+
+          // ★★★ [수정 1] 좋아요 상태 (root의 checkedLike 우선 사용) ★★★
+          if (data.checkedLike) {
+             setIsLiked(true);
+          } else if (postData && (postData.isLiked || postData.liked)) {
+             // 혹시 몰라 기존 데이터도 백업으로 확인
+             setIsLiked(true);
+          }
+
+          // ★★★ [수정 2] 팔로우 상태 (root의 checkedFollow 우선 사용) ★★★
+          if (data.checkedFollow) {
+             setIsFollowing(true);
+          } else if (postData && (postData.isFollowed || postData.followed)) {
+             setIsFollowing(true);
+          }
+
+          // 4. 좋아요 개수 세팅
+          if (postData) {
+            setLikeCount(postData.likeCount || 0);
+          }
         }
       })
       .catch(err => {
@@ -42,52 +70,46 @@ const DetailPage = () => {
 
   const { post, roadmap, comments } = detail;
 
-  // ✅ [핵심 기능] 로드맵을 일차(Day)별로 그룹화하는 함수
-  const getGroupedRoadmap = () => {
-    if (!roadmap || roadmap.length === 0) return {};
+  // ----------------------- 핸들러 함수들 -----------------------
 
-    let currentDay = 1;
-    const grouped = {};
-
-    roadmap.forEach((item, index) => {
-      // 1. 첫 번째 아이템이 아니고,
-      // 2. 현재 시간이 이전 시간보다 빠르다면 (예: 18:00 -> 09:00) 다음 날로 간주
-      if (index > 0) {
-        const prevTime = roadmap[index - 1].visitTime; // "18:00:00"
-        const currTime = item.visitTime;               // "09:00:00"
-        
-        // 문자열 비교로 시간 역전 감지
-        if (currTime < prevTime) {
-          currentDay++;
-        }
-      }
-
-      // 그룹 배열이 없으면 생성
-      if (!grouped[currentDay]) {
-        grouped[currentDay] = [];
-      }
-      
-      // 해당 일차에 아이템 추가
-      grouped[currentDay].push(item);
-    });
-
-    return grouped;
-  };
-
-  // 그룹화된 데이터 가져오기
-  const groupedRoadmap = getGroupedRoadmap();
-
-  // 이동 핸들러들
+  // 작성자 프로필 클릭
   const handleProfileClick = () => {
     const targetUserIdx = post.userIdx || post.writerIdx;
     if (targetUserIdx) navigate(`/other/${targetUserIdx}`);
   };
 
+  // 댓글 유저 프로필 클릭
   const handleCommentUserClick = (commentUserIdx) => {
     if (commentUserIdx) navigate(`/other/${commentUserIdx}`);
     else alert("유저 정보를 찾을 수 없습니다.");
   };
 
+  // [기능 추가] 좋아요 버튼 핸들러
+  const handleLike = async () => {
+    const token = getCookie('token');
+    if (!token) return alert("로그인이 필요한 서비스입니다.");
+
+    try {
+      // 좋아요 토글 API 호출
+      await axios.post(`http://localhost:8085/api/likes/${idx}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      // UI 즉시 업데이트 (낙관적 업데이트)
+      if (isLiked) {
+        setLikeCount(prev => prev - 1);
+        setIsLiked(false);
+      } else {
+        setLikeCount(prev => prev + 1);
+        setIsLiked(true);
+      }
+    } catch (error) {
+      console.error("좋아요 실패:", error);
+      alert("좋아요 처리에 실패했습니다.");
+    }
+  };
+
+  // 팔로우 버튼 핸들러
   const handleFollow = async () => {
     const token = getCookie('token');
     if (!token) return alert("로그인이 필요한 서비스입니다.");
@@ -106,6 +128,7 @@ const DetailPage = () => {
     }
   };
 
+  // 댓글 등록 핸들러
   function inputcomment() {
     const content = document.getElementById("content");
     const token = getCookie('token');
@@ -113,9 +136,13 @@ const DetailPage = () => {
     if (!content.value.trim()) return alert("내용을 입력해주세요.");
 
     comment({ content: content.value, token: token, postIdx: idx })
-      .then(res => { if (res.status === 200) window.location.reload(); })
+      .then(res => {
+        if (res.status === 200) window.location.reload();
+      })
       .catch(err => alert("댓글 등록 중 오류가 발생했습니다."));
   }
+
+  // ----------------------- 렌더링 -----------------------
 
   return (
     <div className="detail-page">
@@ -125,6 +152,7 @@ const DetailPage = () => {
 
           <header className="detail-header">
             <h1 className="detail-title">{post.title}</h1>
+            
             <div 
               className="author-info-row" 
               onClick={handleProfileClick} 
@@ -157,38 +185,19 @@ const DetailPage = () => {
                   <p>{post.nickname}님의 {post.mbti} 성향에 맞춘 최적화 경로</p>
                 </div>
               </div>
-
-              {/* ✅ [수정] 일차별로 렌더링 */}
               <div className="timeline">
-                {Object.keys(groupedRoadmap).length > 0 ? (
-                  Object.keys(groupedRoadmap).map((day) => (
-                    <div key={day} className="day-section">
-                      
-                      {/* 일차 표시 헤더 (Day 1, Day 2 ...) */}
-                      <div className="day-header" style={{
-                          padding: '10px 0', 
-                          fontWeight: 'bold', 
-                          color: '#5D5FEF', 
-                          borderBottom: '1px dashed #ddd',
-                          marginBottom: '15px',
-                          marginTop: day > 1 ? '30px' : '0'
-                      }}>
-                        📅 Day {day}
-                      </div>
-
-                      {groupedRoadmap[day].map((item, index) => (
-                        <div key={index} className="timeline-item">
-                          <div className="time-dot"></div>
-                          <div className="timeline-content">
-                            <div className="item-header">
-                              <span className="item-time-place">{item.visitTime} - {item.planTitle}</span>
-                              <span className="item-label">{item.types}</span>
-                            </div>
-                            <p className="item-desc">{item.memo}</p>
-                            <div className="item-tags"><span>#{item.address}</span></div>
-                          </div>
+                {roadmap && roadmap.length > 0 ? (
+                  roadmap.map((item, index) => (
+                    <div key={index} className="timeline-item">
+                      <div className="time-dot"></div>
+                      <div className="timeline-content">
+                        <div className="item-header">
+                          <span className="item-time-place">{item.visitTime} - {item.planTitle}</span>
+                          <span className="item-label">{item.types}</span>
                         </div>
-                      ))}
+                        <p className="item-desc">{item.memo}</p>
+                        <div className="item-tags"><span>#{item.address}</span></div>
+                      </div>
                     </div>
                   ))
                 ) : (
@@ -198,6 +207,7 @@ const DetailPage = () => {
             </div>
           </article>
 
+          {/* 댓글 섹션 */}
           <section className="comment-section">
             <h3>댓글 {comments ? comments.length : 0}개</h3>
             <div className="comment-list">
@@ -214,9 +224,14 @@ const DetailPage = () => {
                         backgroundPosition: 'center'
                     }}
                   ></div>
+
                   <div className="comment-body">
                     <div className="comment-user-info">
-                      <span className="c-name" onClick={() => handleCommentUserClick(c.userIdx)} style={{ cursor: 'pointer' }}>
+                      <span 
+                        className="c-name" 
+                        onClick={() => handleCommentUserClick(c.userIdx)}
+                        style={{ cursor: 'pointer' }}
+                      >
                         {c.nickname} <span className="c-mbti">{c.mbti}</span>
                       </span>
                       <span className="c-time">{c.createAt}</span>
@@ -226,6 +241,7 @@ const DetailPage = () => {
                 </div>
               ))}
             </div>
+            
             <div className="comment-input-area">
               <div className="comment-user-img"></div>
               <div className="input-box">
@@ -238,9 +254,21 @@ const DetailPage = () => {
 
         <aside className="post-sidebar">
           <div className="sidebar-stats">
-            <div className="stat-item"><span>❤️</span> 좋아요 <strong>{post.likeCount || 0}</strong></div>
+            {/* ✅ [기능 구현] 좋아요 버튼 */}
+            <div 
+              className="stat-item" 
+              onClick={handleLike} 
+              style={{ 
+                cursor: 'pointer', 
+                color: isLiked ? '#ff4757' : 'inherit', // 좋아요 시 빨간색
+                fontWeight: isLiked ? 'bold' : 'normal'
+              }}
+            >
+              <span>{isLiked ? '❤️' : '🤍'}</span> 좋아요 <strong>{likeCount}</strong>
+            </div>
             <div className="stat-item"><span>🔗</span> 공유하기</div>
           </div>
+
           <div className="about-author-card">
             <p className="about-label">ABOUT AUTHOR</p>
             <div className="author-card-content">
@@ -257,6 +285,8 @@ const DetailPage = () => {
               </div>
             </div>
             <p className="author-intro">{post.userIntro || "소개글이 없습니다."}</p>
+
+            {/* ✅ 팔로우 버튼 (내 글 아닐 때만 노출) */}
             {!isMine && (
               <button
                 className="follow-btn"
@@ -284,4 +314,4 @@ const DetailPage = () => {
   );
 };
 
-export default DetailPage;    
+export default DetailPage;
