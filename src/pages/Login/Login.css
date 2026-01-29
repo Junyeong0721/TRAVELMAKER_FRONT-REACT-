@@ -107,6 +107,12 @@
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
+  margin-top: 15px;
+  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.login-submit-btn:hover {
+  box-shadow: 0 10px 20px rgba(79, 99, 255, 0.3);
+  transform: translateY(-3px);
 }
 
 /* 핵심 수정 부분: 회원가입 문구 */
@@ -125,7 +131,9 @@
   color: #4f63ff;
   font-weight: 700;
   text-decoration: none;
+  cursor: pointer;
 }
+.signup-link:hover { text-decoration: underline; }
 
 .corner-tag {
   position: absolute;

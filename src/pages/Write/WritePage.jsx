@@ -88,7 +88,8 @@ const PostWrite = () => {
       <main className="write-container">
         {/* 상단 경로 및 제목 영역 */}
         <header className="write-header">
-          <nav className="breadcrumb">커뮤니티 {'>'} <span>게시글 작성</span></nav>
+          <nav className="breadcrumb"  onClick={() => navigate('/CommunityPage')}>커뮤니티 {'>'} 
+            <span>게시글 작성</span></nav>
           <div className="header-flex">
             <h2 className="main-title">여행 이야기 공유하기</h2>
             <div className="action-btns">
@@ -111,7 +112,7 @@ const PostWrite = () => {
                 <Editor
                   apiKey = 'd1y2skf5ovre6zinkxg4evgq170a6emydjbkkeyejxffoxuj'
                   onInit={(evt, editor) => editorRef.current = editor}
-                  initialValue="<p>어떤 여행이었나요? 이곳에 자세한 이야기를 들려주세요...</p>"
+                  initialValue=""
                   init={{
                     height: 800,
                     menubar: false,

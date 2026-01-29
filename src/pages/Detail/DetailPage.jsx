@@ -13,18 +13,18 @@ const DetailPage = () => {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 상태 관리
+  // 상태 관리 (중복 제거됨)
   const [isFollowing, setIsFollowing] = useState(false); // 팔로우 여부
   const [isMine, setIsMine] = useState(false);         // 내 글 여부
   const [isLiked, setIsLiked] = useState(false);       // 좋아요 여부
   const [likeCount, setLikeCount] = useState(0);       // 좋아요 개수
 
   useEffect(() => {
-    // API 호출 (detailService.js에서 토큰 헤더 꼭 확인하세요!)
+    // API 호출
     boardDetail(idx)
       .then(res => {
         if (res.status === 200) {
-          console.log("🔍 게시글 상세 데이터 확인:", res.data); // 데이터 구조 확인용 로그
+          console.log("🔍 게시글 상세 데이터 확인:", res.data); 
           setDetail(res.data);
 
           const data = res.data;
@@ -35,15 +35,14 @@ const DetailPage = () => {
             setIsMine(true);
           }
 
-          // ★★★ [수정 1] 좋아요 상태 (root의 checkedLike 우선 사용) ★★★
+          // 2. 좋아요 상태 확인 (root의 checkedLike 우선 사용)
           if (data.checkedLike) {
              setIsLiked(true);
           } else if (postData && (postData.isLiked || postData.liked)) {
-             // 혹시 몰라 기존 데이터도 백업으로 확인
              setIsLiked(true);
           }
 
-          // ★★★ [수정 2] 팔로우 상태 (root의 checkedFollow 우선 사용) ★★★
+          // 3. 팔로우 상태 확인 (root의 checkedFollow 우선 사용)
           if (data.checkedFollow) {
              setIsFollowing(true);
           } else if (postData && (postData.isFollowed || postData.followed)) {
@@ -84,7 +83,7 @@ const DetailPage = () => {
     else alert("유저 정보를 찾을 수 없습니다.");
   };
 
-  // [기능 추가] 좋아요 버튼 핸들러
+  // [기능 추가] 좋아요 버튼 핸들러 (통합 API 사용)
   const handleLike = async () => {
     const token = getCookie('token');
     if (!token) return alert("로그인이 필요한 서비스입니다.");
@@ -225,7 +224,7 @@ const DetailPage = () => {
                     }}
                   ></div>
 
-                  <div className="comment-body">
+                  <div className="comment-body" style={{ marginLeft: '10px', marginTop: '10px' }}>
                     <div className="comment-user-info">
                       <span 
                         className="c-name" 

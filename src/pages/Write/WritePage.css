@@ -78,11 +78,12 @@
     font-size: 0.85rem;
     color: var(--text-sub);
     margin-bottom: 15px;
+    cursor: pointer;
 }
 
 .breadcrumb span {
     color: var(--primary);
-    font-weight: bold;
+    font-weight: bold; 
 }
 
 .header-flex {
