@@ -159,7 +159,7 @@ const fetchPlans = async () => {
       setSavedPlans(prev => prev.filter(p => p.planIdx !== planIdx));
     } catch (err) {
       console.error("삭제 실패:", err);
-      alert("삭제 중 오류가 발생했습니다.");
+      alert("플랜이 포함되어있는 게시글을 삭제 해주세요.");
     }
   };
 
