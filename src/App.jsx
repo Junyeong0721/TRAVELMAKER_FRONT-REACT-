@@ -46,6 +46,7 @@ function App() {
           <Route path="/plan/edit/:planIdx" element={<PlanEditPage />} />
            <Route path="/my-travels" element={<MyTravelPage />} />
         </Routes>
+        
       </div>
     </Router>
   );

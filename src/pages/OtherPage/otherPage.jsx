@@ -13,7 +13,7 @@ const OtherPage = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ 페이지네이션 상태 추가
+  // 페이지네이션 상태
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -22,13 +22,34 @@ const OtherPage = () => {
     const fetchOtherData = async () => {
       try {
         setLoading(true);
-        // page 파라미터 추가
-        const res = await api.get(`/other/${userIdx}?page=${page}`);
+
+        // ✅ [수정 핵심] 프로필 정보와 '내 팔로우 목록'을 동시에(혹은 순차적으로) 가져옵니다.
+        // Promise.all을 사용하면 두 요청을 병렬로 처리해 더 빠릅니다.
+        const [resProfile, resFollowing] = await Promise.all([
+           api.get(`/other/${userIdx}?page=${page}`),      // 상대방 프로필 정보
+           api.get('/follow/following').catch(() => ({ data: [] })) // 내 팔로우 목록 (에러나면 빈 배열 처리)
+        ]);
         
-        if (res.status === 200) {
-          setProfile(res.data.profile);
-          setPosts(res.data.posts);
-          setTotalPages(res.data.totalPages || 1); // 총 페이지 수 저장
+        if (resProfile.status === 200) {
+          let profileData = resProfile.data.profile;
+          const postsData = resProfile.data.posts;
+          
+          // ✅ [수정 핵심] 내 팔로우 목록에 현재 보고 있는 유저(userIdx)가 있는지 검사합니다.
+          // userIdx는 URL 파라미터라 문자열일 수 있으니 String()으로 변환해 비교합니다.
+          const myFollowingList = Array.isArray(resFollowing.data) ? resFollowing.data : [];
+          const isActuallyFollowed = myFollowingList.some(user => 
+            String(user.userIdx) === String(userIdx)
+          );
+
+          // 프로필 데이터의 isFollowed 값을 실제 검사 결과로 덮어씁니다.
+          profileData = {
+            ...profileData,
+            isFollowed: isActuallyFollowed
+          };
+
+          setProfile(profileData);
+          setPosts(postsData);
+          setTotalPages(resProfile.data.totalPages || 1);
         }
       } catch (err) {
         console.error("데이터 로딩 실패:", err);
@@ -39,28 +60,30 @@ const OtherPage = () => {
     };
 
     fetchOtherData();
-  }, [userIdx, page]); // page가 바뀔 때마다 재실행
+  }, [userIdx, page]); 
 
   // 팔로우 버튼 핸들러
   const handleFollow = async () => {
     try {
       await api.post(`/follow/${userIdx}`);
+      
+      // UI 즉시 업데이트 (낙관적 업데이트)
       setProfile(prev => ({
         ...prev,
         isFollowed: !prev.isFollowed,
         followerCount: prev.isFollowed ? prev.followerCount - 1 : prev.followerCount + 1
       }));
     } catch (err) {
-      alert("로그인이 필요하거나 오류가 발생했습니다.");
+      console.error(err);
+      alert("처리에 실패했습니다.");
     }
   };
 
-  // ✅ 페이지 변경 함수
+  // 페이지 변경 함수
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
         setPage(newPage);
-        // 페이지 넘길 때 맨 위로 스크롤 올려주기 (선택사항)
-        // window.scrollTo(0, 0); 
+        window.scrollTo(0, 0); // 페이지 변경 시 맨 위로
     }
   };
 
@@ -92,7 +115,8 @@ const OtherPage = () => {
                         marginLeft: '15px'
                     }}
                 >
-                    {profile.isFollowed ? "팔로잉" : "팔로우"}
+                    {/* ✅ isFollowed 상태에 따라 텍스트 변경 */}
+                    {profile.isFollowed ? "언팔로우" : "팔로우"}
                 </button>
               </div>
 
@@ -130,10 +154,10 @@ const OtherPage = () => {
           ) : (
               posts.map(post => (
                 <article 
-                    key={post.idx} 
-                    className="post-item-card"
-                    onClick={() => navigate(`/DetailPage/${post.idx}`)}
-                    style={{ cursor: 'pointer' }} 
+                  key={post.idx} 
+                  className="post-item-card"
+                  onClick={() => navigate(`/DetailPage/${post.idx}`)}
+                  style={{ cursor: 'pointer' }} 
                 >
                   <div className="post-thumb-box">
                     {post.thumbnail ? (
@@ -151,7 +175,7 @@ const OtherPage = () => {
           )}
         </main>
 
-        {/* ✅ 페이지네이션 버튼 영역 */}
+        {/* 페이지네이션 버튼 영역 */}
         {posts.length > 0 && (
             <div className="pagination-area" style={{display:'flex', justifyContent:'center', marginTop:'30px', gap:'10px'}}>
                 <button 
