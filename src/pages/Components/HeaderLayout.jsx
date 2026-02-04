@@ -35,7 +35,7 @@ const Layout = () => {
       <header className="header">
         <div className="header-inner">
           <Link to="/" className="logo-link">
-            <h1 className="logo">TripMaker <span>Travel Companion</span></h1>
+            <h1 className="logo">TravelMaker <span>Travel Companion</span></h1>
           </Link>
           <nav className="header-nav">
             <Link to="/">홈</Link>

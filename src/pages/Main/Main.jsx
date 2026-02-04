@@ -45,7 +45,7 @@ const Main = () => {
     <div className="main-container">
       {/* Navbar */}
       <header className="navbar">
-        <div className="logo">TripMaker <span className="logo-sub">Travel Companion</span></div>
+        <div className="logo">TravelMaker <span className="logo-sub">Travel Companion</span></div>
   
         <div className="nav-actions">
           {/* 6. 조건부 렌더링 적용 */}
