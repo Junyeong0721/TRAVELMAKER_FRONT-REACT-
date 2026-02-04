@@ -7,7 +7,6 @@ const AIPage = () => {
   const [isSettingsComplete, setIsSettingsComplete] = useState(false);
   const [chatInput, setChatInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const [initialMessage, setInitialMessage] = useState("");
 
   // 모달 관련 상태
@@ -27,7 +26,9 @@ const AIPage = () => {
   const [myMbti, setMyMbti] = useState("ENFP");
   const [partnerMbti, setPartnerMbti] = useState("none");
   const [people, setPeople] = useState(1);
-  const [duration, setDuration] = useState("당일치기");
+  
+  // [수정] 여행 기간 초기값을 "1박 2일"로 설정
+  const [duration, setDuration] = useState("1박 2일");
   const [dailyBudget, setDailyBudget] = useState("");
 
   const [aiRecommendedSets, setAiRecommendedSets] = useState([]);
@@ -54,71 +55,10 @@ const AIPage = () => {
           reason: '활기찬 분위기에서 다양한 먹거리를 즐길 수 있어요.',
           tags: ['시장투어', '먹방', '활기찬']
         },
-        { 
-          id: 'm3', time: '14:00 PM', category: 'SIGHTSEEING',
-          title: '오죽헌', 
-          desc: '역사와 자연이 어우러진 고즈넉한 산책.',
-          address: '강원 강릉시 율곡로3139번길 24',
-          reason: '여유롭게 걸으며 생각을 정리하기 좋습니다.',
-          tags: ['역사', '산책', '포토존']
-        },
-      ]
-    },
-    {
-      id: 'set2',
-      day: '2일차',
-      memos: [
-        { 
-          id: 'm6', time: '09:30 AM', category: 'SIGHTSEEING',
-          title: '경포호 산책', 
-          desc: '호수 주변을 천천히 걸으며 힐링해요.',
-          address: '강원 강릉시 경포로 365',
-          reason: '복잡한 생각을 정리하기 좋은 평화로운 곳입니다.',
-          tags: ['힐링', '자전거', '호수']
-        },
-        { 
-          id: 'm7', time: '11:30 AM', category: 'RESTAURANT',
-          title: '초당 순두부 마을', 
-          desc: '고소하고 부드러운 순두부 정식.',
-          address: '강원 강릉시 초당순두부길 77',
-          reason: '강릉에 왔다면 꼭 먹어야 할 소울 푸드.',
-          tags: ['한식', '아침', '순두부']
-        },
-        { 
-          id: 'm8', time: '13:00 PM', category: 'CAFE',
-          title: '순두부 젤라또', 
-          desc: '식사 후 달콤하고 고소한 젤라또 디저트.',
-          address: '강원 강릉시 초당순두부길 95-5',
-          reason: '단짠단짠의 조화가 매력적입니다.',
-          tags: ['디저트', '아이스크림']
-        },
-      ]
-    },
-    {
-      id: 'set3',
-      day: '3일차',
-      memos: [
-        { 
-          id: 'm9', time: '10:00 AM', category: 'SIGHTSEEING',
-          title: '정동진 레일바이크', 
-          desc: '바다를 보며 달리는 레일바이크 체험.',
-          address: '강원 강릉시 정동진리',
-          reason: '활동적인 ENFP에게 추천하는 액티비티.',
-          tags: ['액티비티', '바다']
-        },
-        { 
-          id: 'm10', time: '13:00 PM', category: 'RESTAURANT',
-          title: '동화가든', 
-          desc: '얼큰한 짬뽕 순두부의 원조.',
-          address: '강원 강릉시 초당순두부길 77번길 15',
-          reason: '해장에 딱 좋은 얼큰한 국물.',
-          tags: ['짬뽕순두부', '맛집']
-        },
       ]
     }
   ];
 
-  // --- 헬퍼 함수들 ---
   const getCategoryIcon = (category) => {
     switch (category) {
       case 'RESTAURANT': return <FaUtensils />;
@@ -137,7 +77,6 @@ const AIPage = () => {
     }
   };
 
-  // 모달 열기
   const openSaveModal = () => {
     const targetSets = aiRecommendedSets.length > 0 ? aiRecommendedSets : fallbackSets;
     if (!targetSets || targetSets.length === 0) {
@@ -148,7 +87,6 @@ const AIPage = () => {
     setIsSaveModalOpen(true);
   };
 
-  // 저장 실행
   const handleConfirmSave = async () => {
     if (!saveTitle.trim()) {
         alert("제목을 입력해야 합니다.");
@@ -189,18 +127,17 @@ const AIPage = () => {
     }
   };
 
-  // AI 추천 요청
   const fetchAiPlan = async (extraMessage = "") => {
     setIsLoading(true);
 
     const budgetNumber = Number(String(dailyBudget ?? "").replace(/[^\d]/g, ""));
     const normalizedPartnerMbti = partnerMbti === "none" ? null : partnerMbti === "SAME" ? myMbti : partnerMbti;
 
+    // [수정] 3가지 옵션에 맞춰 durationMap 조정
     const durationMap = {
-      "당일치기": "DAY_TRIP",
       "1박 2일": "ONE_NIGHT_TWO_DAYS",
       "2박 3일": "TWO_NIGHTS_THREE_DAYS",
-      "3박 4일 이상": "THREE_NIGHTS_PLUS",
+      "3박 4일": "THREE_NIGHTS_PLUS",
     };
 
     const payload = {
@@ -256,15 +193,8 @@ const AIPage = () => {
         </div>
       )}
 
-      {/* 헤더 */}
-      
-
-      {/* 메인 컨테이너: 설정화면은 그대로, 결과화면만 1600px로 아주 넓게 */}
       <main className="ai-container wide-container" style={ isSettingsComplete ? { display: 'flex', flexDirection: 'column', alignItems: 'center', width: '95%', maxWidth: '1600px', margin: '0 auto', paddingBottom: '120px' } : {} }>
         {!isSettingsComplete ? (
-          // --------------------------------------------------------
-          // [1. 설정 화면] (기존 디자인 100% 유지 - 800px)
-          // --------------------------------------------------------
           <div className="setup-phase fade-in">
             <section className="intro-section">
               <div className="title-box">
@@ -277,7 +207,6 @@ const AIPage = () => {
             <section className="settings-section">
               <div className="settings-grid">
                 
-                {/* 나의 MBTI */}
                 <div className="setting-card">
                   <label>🧬 나의 MBTI</label>
                   <select value={myMbti} onChange={(e) => setMyMbti(e.target.value)}>
@@ -300,7 +229,6 @@ const AIPage = () => {
                   </select>
                 </div>
 
-                {/* 동행자 MBTI */}
                 <div className="setting-card">
                   <label>👥 동행자 MBTI</label>
                   <select value={partnerMbti} onChange={(e) => setPartnerMbti(e.target.value)}>
@@ -353,13 +281,13 @@ const AIPage = () => {
                   <input type="number" min="1" value={people} onChange={(e) => setPeople(Number(e.target.value))} />
                 </div>
 
+                {/* [수정] 여행 기간 옵션을 3개로 제한 */}
                 <div className="setting-card">
                   <label>📅 여행 기간</label>
                   <select value={duration} onChange={(e) => setDuration(e.target.value)}>
-                    <option value="당일치기">당일치기</option>
                     <option value="1박 2일">1박 2일</option>
                     <option value="2박 3일">2박 3일</option>
-                    <option value="3박 4일 이상">3박 4일 이상</option>
+                    <option value="3박 4일">3박 4일</option>
                   </select>
                 </div>
 
@@ -387,12 +315,8 @@ const AIPage = () => {
             </section>
           </div>
         ) : (
-          // --------------------------------------------------------
-          // [2. 결과 화면] (1600px로 대폭 확장 + 중앙 정렬 + 채팅창 40px)
-          // --------------------------------------------------------
           <div className="chat-phase fade-in" style={{ width: '100%' }}>
             
-            {/* 상단 버튼 영역 */}
             <div className="result-control-bar" style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'20px' }}>
                 <button 
                   className="reset-btn" 
@@ -407,11 +331,10 @@ const AIPage = () => {
                   style={{ background: '#5D5FEF', color:'white', padding: '10px 20px', borderRadius:'20px', border:'none', cursor:'pointer', fontWeight:'bold', boxShadow:'0 4px 10px rgba(93,95,239,0.3)' }} 
                   onClick={openSaveModal}
                 >
-                   AI 풀코스 저장하기 💾
+                    AI 풀코스 저장하기 💾
                 </button>
             </div>
 
-            {/* ✅ [핵심] 리스트 영역: 너비 100% 사용, 카드 크게 */}
             <div className="notepad-layout-expanded" style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
               
               <div className="recommendation-scroll-area" style={{ 
@@ -423,7 +346,7 @@ const AIPage = () => {
               }}>
                 {(aiRecommendedSets.length ? aiRecommendedSets : fallbackSets).map((set, setIdx) => (
                   <div key={set.id} className="day-column" style={{ 
-                      flex: 1, // ✅ 남은 공간을 꽉 채움 (아주 넓어짐)
+                      flex: 1, 
                       minWidth: '0', 
                       background: '#fff', 
                       padding: '25px', 
@@ -445,12 +368,10 @@ const AIPage = () => {
                             className="timeline-item"
                             style={{ display: 'flex', gap: '15px', marginBottom: '20px', position: 'relative' }}
                           >
-                            {/* 타임라인 연결선 */}
                             {mIdx !== set.memos.length - 1 && (
                               <div style={{ position: 'absolute', left: '20px', top: '45px', bottom: '-25px', width: '2px', background: '#e0e0e0' }}></div>
                             )}
 
-                            {/* 마커 */}
                             <div className="timeline-marker" style={{ 
                                 width: '40px', height: '40px', borderRadius: '50%', 
                                 backgroundColor: color, display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -461,7 +382,6 @@ const AIPage = () => {
                               </span>
                             </div>
                             
-                            {/* 내용 */}
                             <div className="timeline-content" style={{ flex: 1, background: '#f8f9fa', padding: '15px', borderRadius: '12px', border: '1px solid #eee' }}>
                               <div className="time-badge" style={{ display:'inline-block', padding:'3px 8px', background:'#eee', borderRadius:'6px', fontSize: '0.8rem', color: '#555', marginBottom: '6px', fontWeight: 'bold' }}>
                                 ⏰ {memo.time}
@@ -487,14 +407,13 @@ const AIPage = () => {
               </div>
             </div>
 
-            {/* 채팅창 (너비 1600px에 맞춤) */}
             <div className="gemini-search-container" style={{ 
                 position: 'fixed', 
                 bottom: '40px', 
                 left: '50%', 
                 transform: 'translateX(-50%)', 
                 width: '90%', 
-                maxWidth: '1600px', // ✅ 채팅창도 1600px까지 늘림
+                maxWidth: '1600px',
                 zIndex: 100 
             }}>
                <div className="gemini-search-box" style={{ 
@@ -518,12 +437,11 @@ const AIPage = () => {
                    style={{ border: 'none', outline: 'none', flex: 1, fontSize: '1.1rem', background:'transparent' }}
                  />
                  <button className="send-btn" onClick={onSendChat} disabled={isLoading} style={{ background: '#5D5FEF', color: 'white', borderRadius: '50%', width: '45px', height: '45px', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize:'1.2rem', transition:'transform 0.2s' }}>
-                    ➤
+                   ➤
                  </button>
                </div>
             </div>
 
-            {/* 모달 (기존 유지) */}
             {isSaveModalOpen && (
               <div style={{
                 position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',

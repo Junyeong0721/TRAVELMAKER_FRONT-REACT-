@@ -14,8 +14,6 @@ const FriendPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [keyword, setKeyword] = useState("");            
   const [searchResult, setSearchResult] = useState([]);  
-  
-  
 
   const myInfo = {
     nickname: "김여행",
@@ -87,7 +85,6 @@ const FriendPage = () => {
       
       // 2. 모달이 열려있다면 -> 검색 결과 새로고침 or 닫기
       if (isModalOpen) {
-        // 검색 결과를 갱신하고 싶다면 다시 검색 호출, 여기서는 닫는 로직 유지
         setIsModalOpen(false);
         setKeyword("");
         setSearchResult([]);
@@ -96,6 +93,13 @@ const FriendPage = () => {
     } catch (error) {
       console.error("팔로우 처리 실패:", error);
       alert("오류가 발생했습니다.");
+    }
+  };
+
+  // ✅ [수정됨] 실제 경로인 /other/ 로 이동하도록 변경
+  const handleProfileClick = (userIdx) => {
+    if (userIdx) {
+      navigate(`/other/${userIdx}`);
     }
   };
 
@@ -125,16 +129,27 @@ const FriendPage = () => {
               ) : (
                 searchResult.map(user => (
                   <div key={user.userIdx} className="friend-item modal-item">
-                      <div className="friend-avatar-wrapper small">
-                         <div className="friend-avatar" style={{backgroundImage: user.profileImage ? `url(${user.profileImage})` : 'none', backgroundColor: '#ddd'}}></div>
+                      {/* 모달 내 프로필 클릭 영역 */}
+                      <div 
+                        className="clickable-profile" 
+                        onClick={() => handleProfileClick(user.userIdx)}
+                        style={{ display: 'flex', alignItems: 'center', flex: 1, cursor: 'pointer' }}
+                      >
+                          <div className="friend-avatar-wrapper small">
+                             <div className="friend-avatar" style={{backgroundImage: user.profileImage ? `url(${user.profileImage})` : 'none', backgroundColor: '#ddd'}}></div>
+                          </div>
+                          <div className="friend-details">
+                             <span className="friend-name">{user.nickname}</span>
+                             {user.mbti && <span className={`mbti-tag ${user.mbti.toLowerCase()}`}>{user.mbti}</span>}
+                          </div>
                       </div>
-                      <div className="friend-details">
-                         <span className="friend-name">{user.nickname}</span>
-                         {user.mbti && <span className={`mbti-tag ${user.mbti.toLowerCase()}`}>{user.mbti}</span>}
-                      </div>
+
                       <button 
                         className={`action-btn ${ (user.followBack || user.isFollowBack) ? 'unfollow' : 'follow' }`}
-                        onClick={() => handleToggleFollow(user.userIdx)}
+                        onClick={(e) => {
+                            e.stopPropagation(); 
+                            handleToggleFollow(user.userIdx);
+                        }}
                       >
                         { (user.followBack || user.isFollowBack) ? "언팔로우" : "팔로우" }
                       </button>
@@ -181,16 +196,15 @@ const FriendPage = () => {
             <nav className="sidebar-menu">
               <div 
                 className="menu-item" 
-                onClick={() => navigate('/mypage')} // 실제 마이페이지 경로
+                onClick={() => navigate('/mypage')} 
                 style={{ cursor: 'pointer' }}
               >
                 👤 내 정보 관리
               </div>
 
-              {/* 현재 페이지이므로 active 클래스 유지 */}
               <div 
                 className="menu-item active"
-                onClick={() => navigate('/friends')} // 현재 페이지 경로
+                onClick={() => navigate('/friends')} 
                 style={{ cursor: 'pointer' }}
               >
                 🔖 친구 관리
@@ -208,7 +222,6 @@ const FriendPage = () => {
           {/* 오른쪽 리스트 영역 */}
           <section className="friend-list-area">
             
-            {/* ✅ Git 충돌 해결된 탭 영역 */}
             <div className="filter-tabs">
               <button 
                 className={`tab ${activeTab === 'following' ? 'active' : ''}`}
@@ -236,37 +249,49 @@ const FriendPage = () => {
               {!loading && Array.isArray(userList) && userList.length > 0 && (
                 userList.map((user, index) => (
                   <div key={user.userIdx || index} className="friend-item">
-                    <div className="friend-avatar-wrapper">
-                      <div 
-                        className="friend-avatar" 
-                        style={{backgroundImage: user.profileImage ? `url(${user.profileImage})` : 'none', backgroundColor: '#ddd'}}
-                      ></div>
-                    </div>
                     
-                    <div className="friend-details">
-                      <div className="name-row">
-                        <span className="friend-name">{user.nickname || "알 수 없음"}</span>
-                        {user.mbti && (
-                            <span className={`mbti-tag ${user.mbti.toLowerCase()}`}>{user.mbti}</span>
-                        )}
-                      </div>
-                      <p className="friend-info-text">{user.statusMessage || "상태 메시지가 없습니다."}</p>
+                    {/* 메인 리스트 내 프로필 클릭 영역 */}
+                    <div 
+                        className="clickable-profile-area" 
+                        onClick={() => handleProfileClick(user.userIdx)}
+                        style={{ display: 'flex', alignItems: 'center', flex: 1, cursor: 'pointer' }}
+                    >
+                        <div className="friend-avatar-wrapper">
+                          <div 
+                            className="friend-avatar" 
+                            style={{backgroundImage: user.profileImage ? `url(${user.profileImage})` : 'none', backgroundColor: '#ddd'}}
+                          ></div>
+                        </div>
+                        
+                        <div className="friend-details">
+                          <div className="name-row">
+                            <span className="friend-name">{user.nickname || "알 수 없음"}</span>
+                            {user.mbti && (
+                                <span className={`mbti-tag ${user.mbti.toLowerCase()}`}>{user.mbti}</span>
+                            )}
+                          </div>
+                          <p className="friend-info-text">{user.statusMessage || "상태 메시지가 없습니다."}</p>
+                        </div>
                     </div>
 
                     <div className="friend-action">
                         {activeTab === 'following' ? (
-                            /* 내가 팔로우하는 탭: 무조건 언팔로우 버튼 */
                             <button 
                                 className="action-btn unfollow"
-                                onClick={() => handleToggleFollow(user.userIdx)}
+                                onClick={(e) => {
+                                    e.stopPropagation(); 
+                                    handleToggleFollow(user.userIdx);
+                                }}
                             >
                                 언팔로우
                             </button>
                         ) : (
-                            /* 나를 팔로우하는 탭: 맞팔 여부에 따라 다름 */
                             <button 
                                 className={`action-btn ${ (user.isFollowBack || user.followBack) ? 'unfollow' : 'follow' }`}
-                                onClick={() => handleToggleFollow(user.userIdx)}
+                                onClick={(e) => {
+                                    e.stopPropagation(); 
+                                    handleToggleFollow(user.userIdx);
+                                }}
                             >
                                 {(user.isFollowBack || user.followBack) ? "언팔로우" : "맞팔로우"}
                             </button>
