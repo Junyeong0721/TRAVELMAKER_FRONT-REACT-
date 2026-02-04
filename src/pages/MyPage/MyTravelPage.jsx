@@ -188,7 +188,7 @@ const fetchPlans = async () => {
         ) : savedPlans.length === 0 ? (
             <div className="empty-message">
                 <p>아직 저장된 여행 계획이 없습니다.</p>
-                <button onClick={() => navigate('/ai')} className="load-btn" style={{marginTop:'15px'}}>
+                <button onClick={() => navigate('/aiPage')} className="load-btn" style={{marginTop:'15px'}}>
                     AI 추천 받으러 가기
                 </button>
             </div>

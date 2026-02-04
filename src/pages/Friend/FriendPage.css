@@ -177,11 +177,28 @@ body {
   font-weight: bold;
   text-transform: uppercase;
 }
-.mbti-tag.entp { background: #F3E8FF; color: #9333EA; }
-.mbti-tag.istj { background: #F1F5F9; color: #475569; }
-.mbti-tag.enfp { background: #DCFCE7; color: #166534; }
-.mbti-tag.intp { background: #FEF9C3; color: #854D0E; }
-.mbti-tag.isfp { background: #FFE4E6; color: #BE123C; }
+.mbti-tag.intj { background: #E0E7FF; color: #4338CA; }
+.mbti-tag.intp { background: #FEF9C3; color: #854D0E; } /* 제공해주신 색상 */
+.mbti-tag.entj { background: #EDE9FE; color: #7C3AED; }
+.mbti-tag.entp { background: #F3E8FF; color: #9333EA; } /* 제공해주신 색상 */
+
+/* 2. 외교관 그룹 (NF형) - 주로 그린/테알 계열 */
+.mbti-tag.infj { background: #D1FAE5; color: #065F46; }
+.mbti-tag.infp { background: #CCFBF1; color: #0D9488; }
+.mbti-tag.enfj { background: #ECFDF5; color: #047857; }
+.mbti-tag.enfp { background: #DCFCE7; color: #166534; } /* 제공해주신 색상 */
+
+/* 3. 관리자 그룹 (SJ형) - 주로 블루/그레이 계열 */
+.mbti-tag.istj { background: #F1F5F9; color: #475569; } /* 제공해주신 색상 */
+.mbti-tag.isfj { background: #DBEAFE; color: #1D4ED8; }
+.mbti-tag.estj { background: #E0F2FE; color: #0369A1; }
+.mbti-tag.esfj { background: #CFFAFE; color: #0E7490; }
+
+/* 4. 탐험가 그룹 (SP형) - 주로 오렌지/핑크/로즈 계열 */
+.mbti-tag.istp { background: #FFEDD5; color: #9A3412; }
+.mbti-tag.isfp { background: #FFE4E6; color: #BE123C; } /* 제공해주신 색상 */
+.mbti-tag.estp { background: #FEF3C7; color: #92400E; }
+.mbti-tag.esfp { background: #FCE7F3; color: #9D174D; }
 
 .friend-info-text { font-size: 0.85rem; color: var(--text-muted); }
 
