@@ -63,7 +63,7 @@ const Main = () => {
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
-          <h1>당신이 꿈꾸는 여행을<br />TripMaker와 함께</h1>
+          <h1>당신이 꿈꾸는 여행을<br />TravelMaker와 함께</h1>
           <p>세상의 아름다운 곳을 쉽고 편하게 계획하세요.<br />개인 맞춤형 일정부터 현지 정보까지, 모든 것을 한 곳에서.</p>
           <div className="hero-btns">
             <button className="btn-primary">무료 시작하기</button>
